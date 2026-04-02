@@ -7,44 +7,33 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         body { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background-color: #fce4ec; font-family: 'Arial', sans-serif; text-align: center; overflow: hidden; position: relative; }
-        /* Barra más chiquita */
-        #progreso-container { width: 70%; height: 6px; background: #f8bbd0; border-radius: 10px; margin-bottom: 20px; display: none; }
+        #progreso-container { width: 60%; height: 5px; background: #f8bbd0; border-radius: 10px; margin-bottom: 20px; display: none; }
         #barra { width: 0%; height: 100%; background: #f06292; border-radius: 10px; transition: 0.5s; }
-        
-        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); width: 85%; max-width: 380px; transition: 0.3s; z-index: 5; }
-        .vibrar { animation: shake 0.3s; }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
-        
+        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); width: 85%; max-width: 380px; z-index: 5; }
+        .vibrar { animation: shake 0.2s; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
         h2 { color: #880e4f; font-size: 1.1rem; margin-bottom: 20px; }
         .btn-container { display: grid; grid-template-columns: 1fr; gap: 10px; }
         button { padding: 12px; border: none; border-radius: 12px; cursor: pointer; background-color: #f06292; color: white; font-weight: bold; }
         input { width: 85%; padding: 12px; margin-bottom: 15px; border: 2px solid #f06292; border-radius: 10px; text-align: center; }
-        
-        /* Mensaje de error */
-        #error { color: #d32f2f; font-size: 0.9rem; margin-top: 15px; min-height: 40px; font-weight: bold; }
-        
-        .scroll-container { height: 200px; overflow-y: scroll; border: none; scrollbar-width: none; }
+        #error { color: #d32f2f; font-size: 0.85rem; margin-top: 10px; min-height: 30px; font-weight: bold; }
+        .scroll-container { height: 200px; overflow-y: scroll; scrollbar-width: none; border-top: 1px solid #fce4ec; padding-top: 10px; }
         .scroll-container::-webkit-scrollbar { display: none; }
-        .espacio-largo { height: 1800px; } 
+        .espacio-largo { height: 1600px; } 
         .respuesta-secreta { font-size: 0.5rem; color: #ffeef6; cursor: pointer; }
-        
         .seccion { display: none; }
         #inicio { display: block; }
-
-        /* Fondo del Minijuego */
         #juego-container { 
             display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            background: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
             z-index: 10; flex-direction: column; align-items: center; justify-content: center; 
         }
-        .corazon { position: absolute; font-size: 2.5rem; cursor: pointer; user-select: none; filter: drop-shadow(0 0 5px rgba(255,255,255,0.5)); transition: transform 0.1s; }
-        .corazon:active { transform: scale(1.5); }
-        #stats { background: rgba(255,255,255,0.3); padding: 10px 20px; border-radius: 20px; color: white; font-weight: bold; margin-bottom: 20px; }
+        .corazon { position: absolute; font-size: 2.5rem; cursor: pointer; user-select: none; }
+        #stats { background: rgba(255,255,255,0.4); padding: 8px 15px; border-radius: 15px; color: #880e4f; font-weight: bold; margin-bottom: 20px; }
     </style>
 </head>
 <body>
     <div id="progreso-container"><div id="barra"></div></div>
-    
     <div class="card" id="contenedor">
         <div id="inicio" class="seccion">
             <h2>antes de iniciar responde estás preguntas para ver si todavía recuerdas cosas de mi</h2>
@@ -53,59 +42,54 @@
                 <button style="background-color: #999;" onclick="mostrarError('ok Héctor 💔')">no puto down</button>
             </div>
         </div>
-
         <div id="preg1" class="seccion">
             <h2>¿Cuál es mi color favorito?</h2>
             <div class="btn-container">
-                <button onclick="mostrarError('eres una tontita Guadalupe inténtalo otra vez 🥰')">Negro</button>
+                <button onclick="mostrarError('eres una tontita Guadalupe 🥰')">Negro</button>
                 <button onclick="actualizarProgreso(1, 'preg2')">Rojo</button>
-                <button onclick="mostrarError('eres una tontita Guadalupe inténtalo otra vez 🥰')">Azul</button>
+                <button onclick="mostrarError('eres una tontita Guadalupe 🥰')">Púrpura</button>
+                <button onclick="mostrarError('eres una tontita Guadalupe 🥰')">Azul</button>
             </div>
         </div>
-
         <div id="preg2" class="seccion">
             <h2>¿Cuál es mi anime favorito?</h2>
-            <p style="font-size: 0.8rem; color: #999;">(Puedes poner cualquiera de los que me gustan)</p>
             <input type="text" id="animeInput" placeholder="Escribe aquí...">
             <button onclick="checkAnime()">Siguiente</button>
         </div>
-
         <div id="preg3" class="seccion">
             <h2>¿Cuál es mi comida favorita?</h2>
             <div class="btn-container">
-                <button onclick="mostrarError('eres una tontita Guadalupe inténtalo otra vez 🥰')">Wewito con jamón</button>
+                <button onclick="mostrarError('eres una tontita Guadalupe 🥰')">Wewito con jamón</button>
+                <button onclick="mostrarError('eres una tontita Guadalupe 🥰')">Maruchan</button>
                 <button onclick="actualizarProgreso(3, 'preg4')">Ambos</button>
+                <button onclick="mostrarError('eres una tontita Guadalupe 🥰')">Ninguna</button>
             </div>
         </div>
-
         <div id="preg4" class="seccion">
             <h2>¿Que tipo de luna era cuando nací?</h2>
-            <p style="font-size: 0.8rem; color: #f06292;">Desliza hacia abajo...</p>
+            <p style="font-size: 0.7rem; color: #f06292;">(Desliza mucho hacia abajo)</p>
             <div class="scroll-container">
-                <button style="width:90%; margin-bottom:10px;" onclick="mostrarError('Ok ya no te acuerdas de mi 💔')">Luna llena</button>
-                <button style="width:90%; margin-bottom:10px;" onclick="mostrarError('Ok ya no te acuerdas de mi 💔')">Luna menguante</button>
+                <button style="width:90%; margin-bottom:10px;" onclick="mostrarError('💔')">Luna llena</button>
+                <button style="width:90%; margin-bottom:10px;" onclick="mostrarError('💔')">Luna menguante</button>
+                <button style="width:90%; margin-bottom:10px;" onclick="mostrarError('💔')">Luna creciente</button>
+                <button style="width:90%; margin-bottom:10px;" onclick="mostrarError('💔')">Media luna</button>
                 <div class="espacio-largo"></div>
                 <span class="respuesta-secreta" onclick="actualizarProgreso(4, 'final-temp')">Naci de día</span>
             </div>
         </div>
-
         <div id="error"></div>
     </div>
-
     <div class="card" id="final-temp" style="display: none;">
         <h2>¡LO LOGRASTE! ❤️</h2>
-        <p>Que Weno que lo completaste tu sola te amo mucho muchísimo y si no ps no me conoces tanto 😞 Pero igual te amo muchísimo</p>
+        <p>Que Weno que lo completaste tu sola te amo mucho muchísimo</p>
         <button onclick="iniciarJuego()">un minijuego para mí nubsita 🥺</button>
     </div>
-
     <div id="juego-container">
-        <div id="stats">❤️: <span id="puntuacion">0</span>/50 | ⏳: <span id="tiempo">80</span>s</div>
+        <div id="stats">❤️: <span id="puntuacion">0</span>/50 | ⏳: <span id="tiempo">67</span>s</div>
         <div id="corazones-juego"></div>
     </div>
-
     <script>
-        let corazonesAtrapados = 0; let tiempoRestante = 80; let intervaloJuego;
-        
+        let corazonesAtrapados = 0; let tiempoRestante = 67; let intervaloJuego;
         function mostrarError(msg) {
             const errDiv = document.getElementById('error');
             errDiv.innerText = msg;
@@ -113,32 +97,20 @@
             setTimeout(() => { 
                 errDiv.innerText = ""; 
                 document.getElementById('contenedor').classList.remove('vibrar');
-            }, 3000); // El mensaje desaparece en 3 segundos
+            }, 1200);
         }
-
         function empezar() { document.getElementById('progreso-container').style.display = 'block'; actualizarProgreso(0, 'preg1'); }
-
         function actualizarProgreso(paso, sigId) {
             document.getElementById('barra').style.width = (paso / 4) * 100 + '%';
             document.querySelectorAll('.seccion, .card').forEach(s => s.style.display = 'none');
-            if(sigId === 'final-temp') { 
-                confetti(); 
-                document.getElementById('final-temp').style.display = 'block'; 
-                document.getElementById('progreso-container').style.display = 'none';
-            }
+            if(sigId === 'final-temp') { confetti(); document.getElementById('final-temp').style.display = 'block'; document.getElementById('progreso-container').style.display = 'none'; }
             else { document.getElementById('contenedor').style.display = 'block'; document.getElementById(sigId).style.display = 'block'; }
         }
-
         function checkAnime() {
             const r = document.getElementById('animeInput').value.toLowerCase();
-            // Aquí están todas tus respuestas
-            if (r.includes("mushoku") || r.includes("clover") || r.includes("bunny") || r.includes("rascal") || r.includes("senpai")) {
-                actualizarProgreso(2, 'preg3');
-            } else {
-                mostrarError('eres una tontita Guadalupe inténtalo otra vez 🥰');
-            }
+            if (r.includes("mushoku") || r.includes("clover") || r.includes("bunny") || r.includes("rascal") || r.includes("senpai")) actualizarProgreso(2, 'preg3');
+            else mostrarError('eres una tontita Guadalupe 🥰');
         }
-
         function iniciarJuego() {
             document.getElementById('final-temp').style.display = 'none';
             document.getElementById('juego-container').style.display = 'flex';
@@ -148,34 +120,22 @@
             }, 1000);
             crearCorazon();
         }
-
         function crearCorazon() {
             if (corazonesAtrapados >= 50 || tiempoRestante <= 0) return;
             const c = document.createElement('span'); c.innerText = "❤️"; c.className = 'corazon';
             c.style.left = Math.random() * (window.innerWidth - 60) + 'px';
             c.style.top = Math.random() * (window.innerHeight - 60) + 'px';
-            c.onclick = () => { 
-                corazonesAtrapados++; 
-                document.getElementById('puntuacion').innerText = corazonesAtrapados; 
-                c.remove(); 
-                if (corazonesAtrapados >= 50) finalJuego(true); 
-                else crearCorazon(); 
-            };
+            c.onclick = () => { corazonesAtrapados++; document.getElementById('puntuacion').innerText = corazonesAtrapados; c.remove(); if (corazonesAtrapados >= 50) finalJuego(true); else crearCorazon(); };
             document.getElementById('corazones-juego').appendChild(c);
-            setTimeout(() => { if(c.parentElement) { c.remove(); crearCorazon(); } }, 900);
+            setTimeout(() => { if(c.parentElement) { c.remove(); crearCorazon(); } }, 850);
         }
-
         function finalJuego(ganado) {
             clearInterval(intervaloJuego); document.getElementById('juego-container').style.display = 'none';
             document.getElementById('final-temp').style.display = 'block';
-            if(ganado) { 
-                confetti(); 
-                document.getElementById('final-temp').innerHTML = "<h2>¡ERES UNA EXPERTA! ❤️</h2><p>¡Te amo muchísimo!</p><button onclick='location.reload()'>Volver a jugar</button>"; 
-            }
-            else { 
-                document.getElementById('final-temp').innerHTML = "<h2>TIEMPO AGOTADO 😢</h2><p>¡Casi lo logras!</p><button onclick='location.reload()'>Reintentar</button>"; 
-            }
+            if(ganado) { confetti(); document.getElementById('final-temp').innerHTML = "<h2>¡ERES UNA EXPERTA! ❤️</h2><p>¡Te amo muchísimo!</p><button onclick='location.reload()'>Volver a jugar</button>"; }
+            else { document.getElementById('final-temp').innerHTML = "<h2>TIEMPO AGOTADO 😢</h2><button onclick='location.reload()'>Reintentar</button>"; }
         }
     </script>
 </body>
 </html>
+
