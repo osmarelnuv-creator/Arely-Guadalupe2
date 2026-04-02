@@ -64,19 +64,19 @@
         }
         #p-carta { margin: 0; white-space: pre-wrap; word-wrap: break-word; }
 
-        /* PANTALLAS FINALES */
+        /* PROPUESTA FINAL */
         #pantalla-propuesta, #pantalla-final-si, #pantalla-final-no { 
             display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
             z-index: 30; flex-direction: column; align-items: center; justify-content: center; 
         }
         #pantalla-final-no { background-color: black; color: white; padding: 20px; }
         .btn-si { background-color: #4caf50; font-size: 1.3rem; padding: 15px 40px; margin-top: 20px; }
-        .btn-no { background-color: #f44336; margin-top: 10px; }
+        .btn-no { background-color: #f44336; margin-top: 10px; position: relative; transition: 0.2s; }
     </style>
 </head>
 <body>
     <div id="progreso-container"><div id="barra"></div></div>
-
+    
     <div class="card" id="contenedor">
         <div id="inicio" class="seccion">
             <h2>antes de iniciar responde estás preguntas para ver si todavía recuerdas cosas de mi</h2>
@@ -147,21 +147,21 @@
         </div>
         <div id="papel-carta">
             <p id="p-carta"></p>
-            <button id="btn-sig-carta" style="display:none; margin-top:20px;" onclick="irAPropuesta()">Siguiente</button>
+            <button id="btn-sig-final" style="display:none; margin-top:20px;" onclick="irAPropuesta()">Siguiente</button>
         </div>
     </div>
 
     <div id="pantalla-propuesta">
         <h2>Arely Guadalupe Arias Gómez</h2>
-        <h1 style="color: #880e4f; margin: 20px;">¿Quieres ser mi novia?</h1>
+        <h1 style="color: #880e4f;">¿Quieres ser mi novia?</h1>
         <div class="btn-container">
-            <button class="btn-si" onclick="aceptar()">SÍ</button>
-            <button class="btn-no" onclick="rechazar()">NO</button>
+            <button class="btn-si" onclick="aceptar()">SÍ ❤️</button>
+            <button class="btn-no" id="btnNo" onmouseover="moverNo()">No</button>
         </div>
     </div>
 
     <div id="pantalla-final-si">
-        <h1 style="color: #c2185b;">¡Qué bueno que dijiste que sí! ❤️</h1>
+        <h1>¡Qué bueno que dijiste que sí! ❤️</h1>
         <p style="font-size: 1.5rem;">Te amo muchísimo amorcito 🥰</p>
     </div>
 
@@ -179,22 +179,18 @@
             document.getElementById('contenedor').classList.add('vibrar');
             setTimeout(() => { errDiv.innerText = ""; document.getElementById('contenedor').classList.remove('vibrar'); }, 1200);
         }
-
         function empezar() { document.getElementById('progreso-container').style.display = 'block'; actualizarProgreso(0, 'preg1'); }
-
         function actualizarProgreso(paso, sigId) {
             document.getElementById('barra').style.width = (paso / 4) * 100 + '%';
             document.querySelectorAll('.seccion, .card').forEach(s => s.style.display = 'none');
             if(sigId === 'final-temp') { confetti(); document.getElementById('final-temp').style.display = 'block'; document.getElementById('progreso-container').style.display = 'none'; }
             else { document.getElementById('contenedor').style.display = 'block'; document.getElementById(sigId).style.display = 'block'; }
         }
-
         function checkAnime() {
             const r = document.getElementById('animeInput').value.toLowerCase();
             if (r.includes("mushoku") || r.includes("clover") || r.includes("bunny") || r.includes("rascal") || r.includes("senpai")) actualizarProgreso(2, 'preg3');
             else mostrarError('eres una tontita Guadalupe 🥰');
         }
-
         function iniciarJuego() {
             document.getElementById('final-temp').style.display = 'none';
             document.getElementById('juego-container').style.display = 'flex';
@@ -204,21 +200,73 @@
             }, 1000);
             crearCorazon();
         }
-
         function crearCorazon() {
             if (corazonesAtrapados >= 50 || tiempoRestante <= 0) return;
             const c = document.createElement('span'); c.innerText = "❤️"; c.className = 'corazon';
             c.style.left = Math.random() * (window.innerWidth - 60) + 'px';
             c.style.top = Math.random() * (window.innerHeight - 60) + 'px';
-            c.onclick = () => { 
-                corazonesAtrapados++; 
-                document.getElementById('puntuacion').innerText = corazonesAtrapados; 
-                c.remove(); 
-                if (corazonesAtrapados >= 50) finalJuego(true); 
-                else crearCorazon(); 
-            };
+            c.onclick = () => { corazonesAtrapados++; document.getElementById('puntuacion').innerText = corazonesAtrapados; c.remove(); if (corazonesAtrapados >= 50) finalJuego(true); else crearCorazon(); };
             document.getElementById('corazones-juego').appendChild(c);
             setTimeout(() => { if(c.parentElement) { c.remove(); crearCorazon(); } }, 850);
         }
+        function finalJuego(ganado) {
+            clearInterval(intervaloJuego); document.getElementById('juego-container').style.display = 'none';
+            document.getElementById('final-temp').style.display = 'block';
+            if(ganado) { 
+                confetti(); 
+                document.getElementById('mensaje-final').style.display = 'none';
+                document.getElementById('gana-juego').style.display = 'block';
+            }
+            else { document.getElementById('final-temp').innerHTML = "<h2>TIEMPO AGOTADO 😢</h2><button onclick='location.reload()'>Reintentar</button>"; }
+        }
 
-        function finalJuego(gan
+        function mostrarPantallaCarta() {
+            document.getElementById('final-temp').style.display = 'none';
+            document.getElementById('pantalla-carta').style.display = 'flex';
+        }
+
+        function abrirCarta() {
+            document.getElementById('seccion-sobre').style.display = 'none';
+            document.getElementById('papel-carta').style.display = 'block';
+            let i = 0;
+            const elementoCarta = document.getElementById('p-carta');
+            function escribir() {
+                if (i < textoCarta.length) {
+                    elementoCarta.innerText += textoCarta.charAt(i);
+                    i++;
+                    setTimeout(escribir, 40);
+                } else {
+                    document.getElementById('btn-sig-final').style.display = 'block';
+                }
+            }
+            escribir();
+        }
+
+        function irAPropuesta() {
+            document.getElementById('pantalla-carta').style.display = 'none';
+            document.getElementById('pantalla-propuesta').style.display = 'flex';
+        }
+
+        function moverNo() {
+            const btn = document.getElementById('btnNo');
+            btn.style.position = "absolute";
+            btn.style.top = Math.random() * 80 + "%";
+            btn.style.left = Math.random() * 80 + "%";
+        }
+
+        function aceptar() {
+            document.getElementById('pantalla-propuesta').style.display = 'none';
+            document.getElementById('pantalla-final-si').style.display = 'flex';
+            const duration = 15 * 1000;
+            const animationEnd = Date.now() + duration;
+            const frame = () => {
+                confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 } });
+                confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 } });
+                if (Date.now() < animationEnd) requestAnimationFrame(frame);
+            };
+            frame();
+        }
+    </script>
+</body>
+    </html>
+    
