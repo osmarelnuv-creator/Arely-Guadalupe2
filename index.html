@@ -14,7 +14,7 @@
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
         h2 { color: #880e4f; font-size: 1.1rem; margin-bottom: 20px; }
         .btn-container { display: grid; grid-template-columns: 1fr; gap: 10px; }
-        button { padding: 12px; border: none; border-radius: 12px; cursor: pointer; background-color: #f06292; color: white; font-weight: bold; }
+        button { padding: 12px; border: none; border-radius: 12px; cursor: pointer; background-color: #f06292; color: white; font-weight: bold; transition: all 0.2s ease; }
         input { width: 85%; padding: 12px; margin-bottom: 15px; border: 2px solid #f06292; border-radius: 10px; text-align: center; }
         #error { color: #d32f2f; font-size: 0.85rem; margin-top: 10px; min-height: 30px; font-weight: bold; }
         .scroll-container { height: 200px; overflow-y: scroll; scrollbar-width: none; border-top: 1px solid #fce4ec; padding-top: 10px; }
@@ -30,7 +30,7 @@
             z-index: 10; flex-direction: column; align-items: center; justify-content: center; 
         }
         .corazon { position: absolute; font-size: 2.5rem; cursor: pointer; user-select: none; }
-        #stats { background: rgba(255,255,255,0.4); padding: 8px 15px; border-radius: 15px; color: #880e4f; font-weight: bold; margin-bottom: 20px; }
+        #stats { background: rgba(255,255,255,0.4); padding: 8px 15px; border-radius: 15px; color: #880e4f; font-weight: bold; margin-bottom: 20px; z-index: 11;}
         
         #pantalla-carta { 
             display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
@@ -64,14 +64,20 @@
         }
         #p-carta { margin: 0; white-space: pre-wrap; word-wrap: break-word; }
 
-        /* PROPUESTA FINAL */
+        /* PROPUESTA FINAL - Dinámica */
         #pantalla-propuesta, #pantalla-final-si, #pantalla-final-no { 
             display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
             z-index: 30; flex-direction: column; align-items: center; justify-content: center; 
         }
         #pantalla-final-no { background-color: black; color: white; padding: 20px; }
-        .btn-si { background-color: #4caf50; font-size: 1.3rem; padding: 15px 40px; margin-top: 20px; }
-        .btn-no { background-color: #f44336; margin-top: 10px; position: absolute; transition: 0.1s ease-out; z-index: 40; }
+        
+        #contenedor-propuesta { display: flex; flex-direction: column; align-items: center; gap: 15px; width: 90%; max-width: 400px;}
+        
+        #gato-triste { width: 150px; height: 150px; border-radius: 15px; display: none; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        #mensaje-segura { color: #880e4f; font-weight: bold; font-size: 1.2rem; min-height: 1.4em; }
+
+        .btn-si { background-color: #4caf50; font-size: 1.3rem; padding: 15px 40px; margin-top: 20px; width: auto; max-width: 90%; }
+        .btn-no { background-color: #f44336; margin-top: 10px; width: auto; font-size: 1rem; padding: 10px 25px; }
     </style>
 </head>
 <body>
@@ -136,7 +142,7 @@
     </div>
 
     <div id="juego-container">
-        <div id="stats">❤️: <span id="puntuacion">0</span>/50 | ⏳: <span id="tiempo">67</span>s</div>
+        <div id="stats">❤️: <span id="puntuacion">0</span>/50 | ⏳: <span id="tiempo">25</span>s</div>
         <div id="corazones-juego"></div>
     </div>
 
@@ -152,11 +158,17 @@
     </div>
 
     <div id="pantalla-propuesta">
-        <h2>Arely Guadalupe Arias Gómez</h2>
-        <h1 style="color: #880e4f; margin-bottom: 80px;">¿Quieres ser mi novia?</h1>
-        <div class="btn-container" style="position: relative; width: 100%; height: 100px;">
-            <button class="btn-si" onclick="aceptar()">SÍ ❤️</button>
-            <button class="btn-no" id="btnNo" onmouseover="moverNo()" onclick="rechazar()">No</button>
+        <div id="contenedor-propuesta" class="card">
+            <h2>Arely Guadalupe Arias Gómez</h2>
+            <h1 style="color: #880e4f;">¿Quieres ser mi novia?</h1>
+            
+            <img id="gato-triste" src="" alt="Gato triste">
+            <p id="mensaje-segura"></p>
+            
+            <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+                <button class="btn-si" id="btnSi" onclick="aceptar()">SÍ ❤️</button>
+                <button class="btn-no" id="btnNo" onclick="rechazar()">No</button>
+            </div>
         </div>
     </div>
 
@@ -165,14 +177,32 @@
         <p style="font-size: 1.5rem;">Te amo muchísimo amorcito 🥰</p>
     </div>
 
-    <div id="pantalla-final-no">
-        <h1>💔</h1>
-        <h2>si es cierto ya tienes novio y es el Héctor</h2>
-    </div>
-
     <script>
-        let corazonesAtrapados = 0; let tiempoRestante = 67; let intervaloJuego;
+        let corazonesAtrapados = 0; 
+        let tiempoRestante = 25; // ULTRA DIFÍCIL: Solo 25 segundos
+        let intervaloJuego;
+        let escalaSi = 1;
+        let escalaNo = 1;
+        let indiceRechazo = 0;
+
         const textoCarta = "Hola wawalupe hemosa espero que estés muy bien solo quiero decirte que te amo mucho muchísimo con todo mi corazón y mi ser eres la mejor te amo te adoro y ni con todas las palabras del mundo podré describir lo mucho que te amo y ps eres muy importante para mí y muy especial y quiero decirte que me gustas y eres muy linda me gusta todo de ti,tu forma de ser, tu caracter,tu carita linda y todo de ti te amoooo mucho encerio mucho muchísimo eres la mejor te adoro eres la mejor nunca lo olvides y solo te te amo Ati y nadie más y solo me gustas tu y pienso en ti todos los días te amoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo";
+
+        const mensajesSegura = [
+            "¿Estás segura, Guadalupe? 🥺",
+            "Piénsalo bien, amor... 💔",
+            "¿Neta me vas a decir que no? 😢",
+            "Me vas a romper el corazón... ❤️‍🩹",
+            "Di que sí, por fis... 😿"
+        ];
+
+        // Links de fotos de gatos tristes reales
+        const fotosGatos = [
+            "https://i.pinimg.com/originals/ae/c4/62/aec462f446950364d2d48c08169e6b4d.jpg",
+            "https://i.redd.it/e7v2b6f1b7421.jpg",
+            "https://i.pinimg.com/736x/8a/8d/62/8a8d62657e2890c9b0e9565e3b2e557b.jpg",
+            "https://i.pinimg.com/originals/db/5b/5c/db5b5c777d9c6c06a34731b5c85116e1.jpg",
+            "https://i.ytimg.com/vi/S7vJ_e0lEic/hqdefault.jpg"
+        ];
 
         function mostrarError(msg) {
             const errDiv = document.getElementById('error');
@@ -208,7 +238,8 @@
             c.style.top = Math.random() * (window.innerHeight - 60) + 'px';
             c.onclick = () => { corazonesAtrapados++; document.getElementById('puntuacion').innerText = corazonesAtrapados; c.remove(); if (corazonesAtrapados >= 50) finalJuego(true); else crearCorazon(); };
             document.getElementById('corazones-juego').appendChild(c);
-            setTimeout(() => { if(c.parentElement) { c.remove(); crearCorazon(); } }, 850);
+            // ULTRA DIFÍCIL: Desaparecen cada 500ms
+            setTimeout(() => { if(c.parentElement) { c.remove(); crearCorazon(); } }, 500); 
         }
         function finalJuego(ganado) {
             clearInterval(intervaloJuego); document.getElementById('juego-container').style.display = 'none';
@@ -246,21 +277,29 @@
         function irAPropuesta() {
             document.getElementById('pantalla-carta').style.display = 'none';
             document.getElementById('pantalla-propuesta').style.display = 'flex';
-            // Posición inicial del botón NO
-            const btnNo = document.getElementById('btnNo');
-            btnNo.style.top = "80px";
-            btnNo.style.left = "calc(50% - 30px)"; // Centrado
         }
 
-        function moverNo() {
-            const btn = document.getElementById('btnNo');
-            // Nuevas coordenadas ultra-aleatorias y rápidas
-            // Asegurando que se mantenga dentro de los márgenes visibles de la tarjeta o pantalla
-            const randomTop = Math.random() * (window.innerHeight - 100) + 50; 
-            const randomLeft = Math.random() * (window.innerWidth - 100) + 50;
+        function rechazar() {
+            escalaSi += 0.2; // Crece el SÍ un 20%
+            escalaNo -= 0.15; // Encoge el NO un 15%
+            
+            if(escalaNo < 0.3) escalaNo = 0.3; // Límite mínimo para que no desaparezca
 
-            btn.style.top = randomTop + "px";
-            btn.style.left = randomLeft + "px";
+            const btnSi = document.getElementById('btnSi');
+            const btnNo = document.getElementById('btnNo');
+            const gato = document.getElementById('gato-triste');
+            const mensaje = document.getElementById('mensaje-segura');
+
+            // Aplicar escalas
+            btnSi.style.transform = `scale(${escalaSi})`;
+            btnNo.style.transform = `scale(${escalaNo})`;
+
+            // Mostrar chantaje emocional
+            gato.src = fotosGatos[indiceRechazo % fotosGatos.length];
+            gato.style.display = 'block';
+            mensaje.innerText = mensajesSegura[indiceRechazo % mensajesSegura.length];
+
+            indiceRechazo++;
         }
 
         function aceptar() {
@@ -275,13 +314,7 @@
             };
             frame();
         }
-
-        function rechazar() {
-            // Esto solo pasa si logra tocarlo (lo cual es casi imposible ahora)
-            document.getElementById('pantalla-propuesta').style.display = 'none';
-            document.getElementById('pantalla-final-no').style.display = 'flex';
-        }
     </script>
 </body>
-</html>
-
+                    </html>
+    
