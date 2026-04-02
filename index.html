@@ -64,20 +64,18 @@
         }
         #p-carta { margin: 0; white-space: pre-wrap; word-wrap: break-word; }
 
-        /* PROPUESTA FINAL - Dinámica */
+        /* PROPUESTA FINAL */
         #pantalla-propuesta, #pantalla-final-si, #pantalla-final-no { 
             display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
             z-index: 30; flex-direction: column; align-items: center; justify-content: center; 
         }
-        #pantalla-final-no { background-color: black; color: white; padding: 20px; }
+        #contenedor-propuesta { display: flex; flex-direction: column; align-items: center; gap: 15px; width: 90%; max-width: 400px; padding: 30px; }
         
-        #contenedor-propuesta { display: flex; flex-direction: column; align-items: center; gap: 15px; width: 90%; max-width: 400px;}
-        
-        #gato-triste { width: 150px; height: 150px; border-radius: 15px; display: none; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        #mensaje-segura { color: #880e4f; font-weight: bold; font-size: 1.2rem; min-height: 1.4em; }
+        #gato-triste { width: 160px; height: 160px; border-radius: 20px; display: none; object-fit: cover; margin-bottom: 10px; }
+        #mensaje-segura { color: #880e4f; font-weight: bold; font-size: 1.1rem; min-height: 1.2em; margin-bottom: 15px; }
 
-        .btn-si { background-color: #4caf50; font-size: 1.3rem; padding: 15px 40px; margin-top: 20px; width: auto; max-width: 90%; }
-        .btn-no { background-color: #f44336; margin-top: 10px; width: auto; font-size: 1rem; padding: 10px 25px; }
+        .btn-si { background-color: #4caf50; font-size: 1.3rem; padding: 15px 40px; width: auto; transition: 0.3s; }
+        .btn-no { background-color: #f44336; font-size: 1rem; padding: 10px 25px; width: auto; transition: 0.3s; }
     </style>
 </head>
 <body>
@@ -142,7 +140,7 @@
     </div>
 
     <div id="juego-container">
-        <div id="stats">❤️: <span id="puntuacion">0</span>/50 | ⏳: <span id="tiempo">25</span>s</div>
+        <div id="stats">❤️: <span id="puntuacion">0</span>/50 | ⏳: <span id="tiempo">45</span>s</div>
         <div id="corazones-juego"></div>
     </div>
 
@@ -165,7 +163,7 @@
             <img id="gato-triste" src="" alt="Gato triste">
             <p id="mensaje-segura"></p>
             
-            <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            <div style="display: flex; flex-direction: column; align-items: center; width: 100%; gap: 10px;">
                 <button class="btn-si" id="btnSi" onclick="aceptar()">SÍ ❤️</button>
                 <button class="btn-no" id="btnNo" onclick="rechazar()">No</button>
             </div>
@@ -179,23 +177,14 @@
 
     <script>
         let corazonesAtrapados = 0; 
-        let tiempoRestante = 25; // ULTRA DIFÍCIL: Solo 25 segundos
-        let intervaloJuego;
+        let tiempoRestante = 45; // MÁS TIEMPO: 45 segundos
         let escalaSi = 1;
         let escalaNo = 1;
         let indiceRechazo = 0;
 
         const textoCarta = "Hola wawalupe hemosa espero que estés muy bien solo quiero decirte que te amo mucho muchísimo con todo mi corazón y mi ser eres la mejor te amo te adoro y ni con todas las palabras del mundo podré describir lo mucho que te amo y ps eres muy importante para mí y muy especial y quiero decirte que me gustas y eres muy linda me gusta todo de ti,tu forma de ser, tu caracter,tu carita linda y todo de ti te amoooo mucho encerio mucho muchísimo eres la mejor te adoro eres la mejor nunca lo olvides y solo te te amo Ati y nadie más y solo me gustas tu y pienso en ti todos los días te amoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo";
 
-        const mensajesSegura = [
-            "¿Estás segura, Guadalupe? 🥺",
-            "Piénsalo bien, amor... 💔",
-            "¿Neta me vas a decir que no? 😢",
-            "Me vas a romper el corazón... ❤️‍🩹",
-            "Di que sí, por fis... 😿"
-        ];
-
-        // Links de fotos de gatos tristes reales
+        const mensajesSegura = ["¿Estás segura? 🥺", "¿Neta Guadalupe? 💔", "Piénsalo bien... 😢", "¿Me vas a romper el corazón? ❤️‍🩹", "Por fis di que sí... 😿"];
         const fotosGatos = [
             "https://i.pinimg.com/originals/ae/c4/62/aec462f446950364d2d48c08169e6b4d.jpg",
             "https://i.redd.it/e7v2b6f1b7421.jpg",
@@ -238,75 +227,40 @@
             c.style.top = Math.random() * (window.innerHeight - 60) + 'px';
             c.onclick = () => { corazonesAtrapados++; document.getElementById('puntuacion').innerText = corazonesAtrapados; c.remove(); if (corazonesAtrapados >= 50) finalJuego(true); else crearCorazon(); };
             document.getElementById('corazones-juego').appendChild(c);
-            // ULTRA DIFÍCIL: Desaparecen cada 500ms
-            setTimeout(() => { if(c.parentElement) { c.remove(); crearCorazon(); } }, 500); 
+            setTimeout(() => { if(c.parentElement) { c.remove(); crearCorazon(); } }, 650); // Más tiempo en pantalla
         }
         function finalJuego(ganado) {
             clearInterval(intervaloJuego); document.getElementById('juego-container').style.display = 'none';
             document.getElementById('final-temp').style.display = 'block';
-            if(ganado) { 
-                confetti(); 
-                document.getElementById('mensaje-final').style.display = 'none';
-                document.getElementById('gana-juego').style.display = 'block';
-            }
+            if(ganado) { confetti(); document.getElementById('mensaje-final').style.display = 'none'; document.getElementById('gana-juego').style.display = 'block'; }
             else { document.getElementById('final-temp').innerHTML = "<h2>TIEMPO AGOTADO 😢</h2><button onclick='location.reload()'>Reintentar</button>"; }
         }
-
-        function mostrarPantallaCarta() {
-            document.getElementById('final-temp').style.display = 'none';
-            document.getElementById('pantalla-carta').style.display = 'flex';
-        }
-
+        function mostrarPantallaCarta() { document.getElementById('final-temp').style.display = 'none'; document.getElementById('pantalla-carta').style.display = 'flex'; }
         function abrirCarta() {
             document.getElementById('seccion-sobre').style.display = 'none';
             document.getElementById('papel-carta').style.display = 'block';
-            let i = 0;
-            const elementoCarta = document.getElementById('p-carta');
+            let i = 0; const elementoCarta = document.getElementById('p-carta');
             function escribir() {
-                if (i < textoCarta.length) {
-                    elementoCarta.innerText += textoCarta.charAt(i);
-                    i++;
-                    setTimeout(escribir, 40);
-                } else {
-                    document.getElementById('btn-sig-final').style.display = 'block';
-                }
+                if (i < textoCarta.length) { elementoCarta.innerText += textoCarta.charAt(i); i++; setTimeout(escribir, 40); }
+                else { document.getElementById('btn-sig-final').style.display = 'block'; }
             }
             escribir();
         }
-
-        function irAPropuesta() {
-            document.getElementById('pantalla-carta').style.display = 'none';
-            document.getElementById('pantalla-propuesta').style.display = 'flex';
-        }
-
+        function irAPropuesta() { document.getElementById('pantalla-carta').style.display = 'none'; document.getElementById('pantalla-propuesta').style.display = 'flex'; }
+        
         function rechazar() {
-            escalaSi += 0.2; // Crece el SÍ un 20%
-            escalaNo -= 0.15; // Encoge el NO un 15%
-            
-            if(escalaNo < 0.3) escalaNo = 0.3; // Límite mínimo para que no desaparezca
-
-            const btnSi = document.getElementById('btnSi');
-            const btnNo = document.getElementById('btnNo');
-            const gato = document.getElementById('gato-triste');
-            const mensaje = document.getElementById('mensaje-segura');
-
-            // Aplicar escalas
-            btnSi.style.transform = `scale(${escalaSi})`;
-            btnNo.style.transform = `scale(${escalaNo})`;
-
-            // Mostrar chantaje emocional
-            gato.src = fotosGatos[indiceRechazo % fotosGatos.length];
-            gato.style.display = 'block';
-            mensaje.innerText = mensajesSegura[indiceRechazo % mensajesSegura.length];
-
-            indiceRechazo++;
+            escalaSi += 0.25; escalaNo -= 0.15;
+            if(escalaNo < 0.3) escalaNo = 0.3;
+            const btnSi = document.getElementById('btnSi'); const btnNo = document.getElementById('btnNo');
+            const gato = document.getElementById('gato-triste'); const mensaje = document.getElementById('mensaje-segura');
+            btnSi.style.transform = `scale(${escalaSi})`; btnNo.style.transform = `scale(${escalaNo})`;
+            gato.src = fotosGatos[indiceRechazo % fotosGatos.length]; gato.style.display = 'block';
+            mensaje.innerText = mensajesSegura[indiceRechazo % mensajesSegura.length]; indiceRechazo++;
         }
-
         function aceptar() {
             document.getElementById('pantalla-propuesta').style.display = 'none';
             document.getElementById('pantalla-final-si').style.display = 'flex';
-            const duration = 15 * 1000;
-            const animationEnd = Date.now() + duration;
+            const duration = 15 * 1000; const animationEnd = Date.now() + duration;
             const frame = () => {
                 confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 } });
                 confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 } });
@@ -316,5 +270,5 @@
         }
     </script>
 </body>
-                    </html>
+    </html>
     
