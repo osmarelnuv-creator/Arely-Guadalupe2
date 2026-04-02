@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Para Arely ❤️</title>
+    <title>Trivia ❤️</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         body { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background-color: #fce4ec; font-family: 'Arial', sans-serif; text-align: center; overflow: hidden; position: relative; }
@@ -14,7 +14,7 @@
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
         h2 { color: #880e4f; font-size: 1.1rem; margin-bottom: 20px; }
         .btn-container { display: grid; grid-template-columns: 1fr; gap: 10px; }
-        button { padding: 12px; border: none; border-radius: 12px; cursor: pointer; background-color: #f06292; color: white; font-weight: bold; }
+        button { padding: 12px; border: none; border-radius: 12px; cursor: pointer; background-color: #f06292; color: white; font-weight: bold; transition: 0.3s; }
         input { width: 85%; padding: 12px; margin-bottom: 15px; border: 2px solid #f06292; border-radius: 10px; text-align: center; }
         #error { color: #d32f2f; font-size: 0.85rem; margin-top: 10px; min-height: 30px; font-weight: bold; }
         .scroll-container { height: 200px; overflow-y: scroll; scrollbar-width: none; border-top: 1px solid #fce4ec; padding-top: 10px; }
@@ -64,14 +64,22 @@
         }
         #p-carta { margin: 0; white-space: pre-wrap; word-wrap: break-word; }
 
-        /* PROPUESTA FINAL */
-        #pantalla-propuesta, #pantalla-final-si, #pantalla-final-no { 
+        /* PROPUESTA FINAL (CORREGIDA) */
+        #pantalla-propuesta { 
             display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
             z-index: 30; flex-direction: column; align-items: center; justify-content: center; 
         }
-        #pantalla-final-no { background-color: black; color: white; padding: 20px; }
-        .btn-si { background-color: #4caf50; font-size: 1.3rem; padding: 15px 40px; margin-top: 20px; }
-        .btn-no { background-color: #f44336; margin-top: 10px; position: relative; transition: 0.2s; }
+        #contenedor-propuesta { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 20px; width: 90%; max-width: 400px; }
+        #gato-triste { width: 150px; height: 150px; border-radius: 15px; display: none; margin-bottom: 10px; object-fit: cover; }
+        #mensaje-segura { color: #880e4f; font-weight: bold; font-size: 1.1rem; min-height: 1.2em; }
+
+        #pantalla-final-si { 
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            z-index: 40; flex-direction: column; align-items: center; justify-content: center; 
+        }
+        .btn-si { background-color: #4caf50; font-size: 1.3rem; padding: 15px 40px; margin-top: 20px; transition: 0.3s; }
+        /* El No se queda quieto, solo cambia de tamaño */
+        .btn-no { background-color: #f44336; margin-top: 10px; transition: 0.3s; position: relative; }
     </style>
 </head>
 <body>
@@ -152,11 +160,17 @@
     </div>
 
     <div id="pantalla-propuesta">
-        <h2>Arely Guadalupe Arias Gómez</h2>
-        <h1 style="color: #880e4f;">¿Quieres ser mi novia?</h1>
-        <div class="btn-container">
-            <button class="btn-si" onclick="aceptar()">SÍ ❤️</button>
-            <button class="btn-no" id="btnNo" onmouseover="moverNo()">No</button>
+        <div id="contenedor-propuesta" class="card">
+            <h2>Arely Guadalupe Arias Gómez</h2>
+            <h1 style="color: #880e4f;">¿Quieres ser mi novia?</h1>
+            
+            <img id="gato-triste" src="" alt="Gato triste">
+            <p id="mensaje-segura"></p>
+            
+            <div class="btn-container" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+                <button class="btn-si" id="btnSi" onclick="aceptar()">SÍ ❤️</button>
+                <button class="btn-no" id="btnNo" onclick="rechazar()">No</button>
+            </div>
         </div>
     </div>
 
@@ -165,13 +179,22 @@
         <p style="font-size: 1.5rem;">Te amo muchísimo amorcito 🥰</p>
     </div>
 
-    <div id="pantalla-final-no">
-        <h1>Si es cierto, tras que tu novio es el Héctor 💔</h1>
-    </div>
-
     <script>
         let corazonesAtrapados = 0; let tiempoRestante = 67; let intervaloJuego;
         const textoCarta = "Hola wawalupe hemosa espero que estés muy bien solo quiero decirte que te amo mucho muchísimo con todo mi corazón y mi ser eres la mejor te amo te adoro y ni con todas las palabras del mundo podré describir lo mucho que te amo y ps eres muy importante para mí y muy especial y quiero decirte que me gustas y eres muy linda me gusta todo de ti,tu forma de ser, tu caracter,tu carita linda y todo de ti te amoooo mucho encerio mucho muchísimo eres la mejor te adoro eres la mejor nunca lo olvides y solo te te amo Ati y nadie más y solo me gustas tu y pienso en ti todos los días te amoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo";
+
+        // Lógica de la Propuesta con Gatitos
+        let escalaSi = 1;
+        let escalaNo = 1;
+        let indiceRechazo = 0;
+        const mensajesSegura = ["¿Estás segura? 🥺", "¿Neta Guadalupe? 💔", "Piénsalo bien... 😢", "¿Me vas a romper el corazón? ❤️‍🩹", "Por fis di que sí... 😿"];
+        const fotosGatos = [
+            "https://i.pinimg.com/originals/ae/c4/62/aec462f446950364d2d48c08169e6b4d.jpg",
+            "https://i.redd.it/e7v2b6f1b7421.jpg",
+            "https://i.pinimg.com/736x/8a/8d/62/8a8d62657e2890c9b0e9565e3b2e557b.jpg",
+            "https://i.pinimg.com/originals/db/5b/5c/db5b5c777d9c6c06a34731b5c85116e1.jpg",
+            "https://i.ytimg.com/vi/S7vJ_e0lEic/hqdefault.jpg"
+        ];
 
         function mostrarError(msg) {
             const errDiv = document.getElementById('error');
@@ -247,11 +270,31 @@
             document.getElementById('pantalla-propuesta').style.display = 'flex';
         }
 
-        function moverNo() {
-            const btn = document.getElementById('btnNo');
-            btn.style.position = "absolute";
-            btn.style.top = Math.random() * 80 + "%";
-            btn.style.left = Math.random() * 80 + "%";
+        // LÓGICA CORREGIDA DEL BOTÓN NO (No travieso, chantaje emocional)
+        function rechazar() {
+            escalaSi += 0.3; // El Sí crece un 30%
+            escalaNo -= 0.15; // El No se encoge un 15%
+            
+            // Límite mínimo para que no desaparezca el No
+            if(escalaNo < 0.3) escalaNo = 0.3;
+
+            const btnSi = document.getElementById('btnSi');
+            const btnNo = document.getElementById('btnNo');
+            const gato = document.getElementById('gato-triste');
+            const mensaje = document.getElementById('mensaje-segura');
+
+            // Aplicar las escalas (cambio de tamaño)
+            btnSi.style.transform = `scale(${escalaSi})`;
+            btnNo.style.transform = `scale(${escalaNo})`;
+
+            // Mostrar el gato triste correspondiente
+            gato.src = fotosGatos[indiceRechazo % fotosGatos.length];
+            gato.style.display = 'block';
+
+            // Cambiar el mensaje de chantaje
+            mensaje.innerText = mensajesSegura[indiceRechazo % mensajesSegura.length];
+
+            indiceRechazo++;
         }
 
         function aceptar() {
@@ -268,4 +311,5 @@
         }
     </script>
 </body>
-</html>
+    </html>
+    
