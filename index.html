@@ -29,7 +29,7 @@
             background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
             z-index: 10; flex-direction: column; align-items: center; justify-content: center; 
         }
-        .corazon { position: absolute; font-size: 2.5rem; cursor: pointer; user-select: none; }
+        .corazon { position: absolute; font-size: 2.8rem; cursor: pointer; user-select: none; transition: transform 0.1s; }
         #stats { background: rgba(255,255,255,0.4); padding: 8px 15px; border-radius: 15px; color: #880e4f; font-weight: bold; margin-bottom: 20px; }
         
         #pantalla-carta { 
@@ -65,19 +65,23 @@
         #p-carta { margin: 0; white-space: pre-wrap; word-wrap: break-word; }
 
         /* PROPUESTA FINAL */
-        #pantalla-propuesta, #pantalla-final-si, #pantalla-final-no { 
+        #pantalla-propuesta { 
             display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
             z-index: 30; flex-direction: column; align-items: center; justify-content: center; 
             background-color: #fce4ec;
         }
-        #pantalla-final-no { background-color: black; color: white; padding: 20px; }
         
-        /* Ajustes específicos para los gatos y botones de la propuesta */
-        #gato-triste { width: 160px; height: 160px; border-radius: 15px; display: none; object-fit: cover; margin-top: 15px; }
+        #gato-triste { width: 180px; height: 180px; border-radius: 15px; display: none; object-fit: cover; margin: 15px 0; border: 4px solid white; }
         #mensaje-segura { color: #880e4f; font-weight: bold; font-size: 1.2rem; min-height: 1.5em; margin: 10px 0; }
         
         .btn-si { background-color: #4caf50; font-size: 1.3rem; padding: 15px 40px; margin-top: 20px; transition: 0.3s; }
         .btn-no { background-color: #f44336; margin-top: 10px; position: relative; transition: 0.3s; }
+
+        #pantalla-final-si { 
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            z-index: 40; flex-direction: column; align-items: center; justify-content: center; 
+            background-color: #fce4ec;
+        }
     </style>
 </head>
 <body>
@@ -142,7 +146,7 @@
     </div>
 
     <div id="juego-container">
-        <div id="stats">❤️: <span id="puntuacion">0</span>/50 | ⏳: <span id="tiempo">67</span>s</div>
+        <div id="stats">❤️: <span id="puntuacion">0</span>/50 | ⏳: <span id="tiempo">35</span>s</div>
         <div id="corazones-juego"></div>
     </div>
 
@@ -158,8 +162,8 @@
     </div>
 
     <div id="pantalla-propuesta">
-        <h2>Arely Guadalupe Arias Gómez</h2>
-        <h1 style="color: #880e4f;">¿Quieres ser mi novia?</h1>
+        <h2 style="margin: 0;">Arely Guadalupe Arias Gómez</h2>
+        <h1 style="color: #880e4f; margin: 10px 0;">¿Quieres ser mi novia?</h1>
         
         <img id="gato-triste" src="" alt="Gato triste">
         <p id="mensaje-segura"></p>
@@ -175,25 +179,23 @@
         <p style="font-size: 1.5rem;">Te amo muchísimo amorcito 🥰</p>
     </div>
 
-    <div id="pantalla-final-no">
-        <h1>Si es cierto, tras que tu novio es el Héctor 💔</h1>
-    </div>
-
     <script>
         let corazonesAtrapados = 0; let tiempoRestante = 67; let intervaloJuego;
         const textoCarta = "Hola wawalupe hemosa espero que estés muy bien solo quiero decirte que te amo mucho muchísimo con todo mi corazón y mi ser eres la mejor te amo te adoro y ni con todas las palabras del mundo podré describir lo mucho que te amo y ps eres muy importante para mí y muy especial y quiero decirte que me gustas y eres muy linda me gusta todo de ti,tu forma de ser, tu caracter,tu carita linda y todo de ti te amoooo mucho encerio mucho muchísimo eres la mejor te adoro eres la mejor nunca lo olvides y solo te te amo Ati y nadie más y solo me gustas tu y pienso en ti todos los días te amoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo";
 
-        // Variables añadidas para la propuesta
+        // Lógica de Propuesta
         let escalaSi = 1;
         let escalaNo = 1;
         let indiceRechazo = 0;
         const mensajesSegura = ["¿Estás segura? 🥺", "¿Neta Guadalupe? 💔", "Piénsalo bien... 😢", "¿Me vas a romper el corazón? ❤️‍🩹", "Por fis di que sí... 😿"];
+        
+        // Enlaces de gatos tristes actualizados
         const fotosGatos = [
-            "https://i.pinimg.com/originals/ae/c4/62/aec462f446950364d2d48c08169e6b4d.jpg",
-            "https://i.redd.it/e7v2b6f1b7421.jpg",
+            "https://media.tenor.com/On7tS97Wmo4AAAAM/cat-sad.gif",
             "https://i.pinimg.com/736x/8a/8d/62/8a8d62657e2890c9b0e9565e3b2e557b.jpg",
+            "https://pbs.twimg.com/media/Edfp67yX0AEid0V.jpg",
             "https://i.pinimg.com/originals/db/5b/5c/db5b5c777d9c6c06a34731b5c85116e1.jpg",
-            "https://i.ytimg.com/vi/S7vJ_e0lEic/hqdefault.jpg"
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRz7G5h-mSUn1tZ0m76Dk34m5Z-82WfA3I6sw&s"
         ];
 
         function mostrarError(msg) {
@@ -226,11 +228,13 @@
         function crearCorazon() {
             if (corazonesAtrapados >= 50 || tiempoRestante <= 0) return;
             const c = document.createElement('span'); c.innerText = "❤️"; c.className = 'corazon';
-            c.style.left = Math.random() * (window.innerWidth - 60) + 'px';
-            c.style.top = Math.random() * (window.innerHeight - 60) + 'px';
+            c.style.left = Math.random() * (window.innerWidth - 70) + 'px';
+            c.style.top = Math.random() * (window.innerHeight - 70) + 'px';
             c.onclick = () => { corazonesAtrapados++; document.getElementById('puntuacion').innerText = corazonesAtrapados; c.remove(); if (corazonesAtrapados >= 50) finalJuego(true); else crearCorazon(); };
             document.getElementById('corazones-juego').appendChild(c);
-            setTimeout(() => { if(c.parentElement) { c.remove(); crearCorazon(); } }, 850);
+            
+            // VELOCIDAD AJUSTADA: 1100ms para que sea más fácil de atrapar
+            setTimeout(() => { if(c.parentElement) { c.remove(); crearCorazon(); } }, 1100);
         }
         function finalJuego(ganado) {
             clearInterval(intervaloJuego); document.getElementById('juego-container').style.display = 'none';
@@ -270,28 +274,23 @@
             document.getElementById('pantalla-propuesta').style.display = 'flex';
         }
 
-        // LÓGICA DEL BOTÓN NO Y GATITOS
+        // Lógica de Chantaje con Gatos
         function rechazar() {
-            escalaSi += 0.3; // El botón SÍ se hace un 30% más grande
-            escalaNo -= 0.15; // El botón No se hace más pequeño
-            
-            // Límite para que el botón "No" no desaparezca por completo
-            if(escalaNo < 0.3) escalaNo = 0.3;
+            escalaSi += 0.35; // Crece un poco más rápido para presionar
+            escalaNo -= 0.15; 
+            if(escalaNo < 0.2) escalaNo = 0.2;
 
             const btnSi = document.getElementById('btnSi');
             const btnNo = document.getElementById('btnNo');
             const gato = document.getElementById('gato-triste');
             const mensaje = document.getElementById('mensaje-segura');
 
-            // Aplicar los cambios de tamaño a los botones
             btnSi.style.transform = `scale(${escalaSi})`;
             btnNo.style.transform = `scale(${escalaNo})`;
 
-            // Mostrar el gatito correspondiente
+            // Mostrar foto y mensaje
             gato.src = fotosGatos[indiceRechazo % fotosGatos.length];
             gato.style.display = 'block';
-
-            // Mostrar el texto de chantaje correspondiente
             mensaje.innerText = mensajesSegura[indiceRechazo % mensajesSegura.length];
 
             indiceRechazo++;
@@ -311,5 +310,5 @@
         }
     </script>
 </body>
-            </html>
-
+    </html>
+                
