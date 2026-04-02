@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Para mi Arely❤️</title>
+    <meta name="referrer" content="no-referrer">
+    <title>Para Arely ❤️</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         body { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background-color: #fce4ec; font-family: 'Arial', sans-serif; text-align: center; overflow: hidden; position: relative; }
@@ -70,7 +71,11 @@
             background-color: #fce4ec;
         }
         
-        #gato-triste { width: 180px; height: 180px; border-radius: 15px; display: none; object-fit: cover; margin: 15px 0; border: 4px solid white; }
+        /* NUEVOS ESTILOS DEL CONTENEDOR SEGURO */
+        #contenedor-gato { display: none; margin: 15px 0; min-height: 180px; align-items: center; justify-content: center; }
+        #gato-triste { width: 180px; height: 180px; border-radius: 15px; display: none; object-fit: cover; border: 4px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        #gato-fallback { font-size: 130px; line-height: 1; margin: 0; display: none; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.2)); }
+        
         #mensaje-segura { color: #880e4f; font-weight: bold; font-size: 1.2rem; min-height: 1.5em; margin: 10px 0; }
         
         .btn-si { background-color: #4caf50; font-size: 1.3rem; padding: 15px 40px; margin-top: 20px; transition: 0.3s; }
@@ -164,7 +169,11 @@
         <h2 style="margin: 0;">Arely Guadalupe Arias Gómez</h2>
         <h1 style="color: #880e4f; margin: 10px 0;">¿Quieres ser mi novia?</h1>
         
-        <img id="gato-triste" src="" alt="Gato triste">
+        <div id="contenedor-gato">
+            <img id="gato-triste" src="" alt="Gato" crossorigin="anonymous" referrerpolicy="no-referrer" onerror="this.style.display='none'; document.getElementById('gato-fallback').style.display='block';">
+            <div id="gato-fallback">😿</div>
+        </div>
+
         <p id="mensaje-segura"></p>
         
         <div class="btn-container" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
@@ -187,14 +196,16 @@
         let indiceRechazo = 0;
         const mensajesSegura = ["¿Estás segura? 🥺", "¿Neta Guadalupe? 💔", "Piénsalo bien... 😢", "¿Me vas a romper el corazón? ❤️‍🩹", "Por fis di que sí... 😿"];
         
-        // GIFs VARIADOS DE GATITOS TRISTES
         const fotosGatos = [
             "https://media.tenor.com/Y7_v7m6S4zQAAAAM/cat-cry.gif",
+            "https://i.pinimg.com/736x/8a/8d/62/8a8d62657e2890c9b0e9565e3b2e557b.jpg",
             "https://media.tenor.com/XU_9ZkL7_m0AAAAM/sad-kitten.gif",
             "https://media.tenor.com/9vO-U6mB_7UAAAAM/cat-sad.gif",
-            "https://media.tenor.com/I769_8uL_8AAAAAM/cat-crying.gif",
-            "https://media.tenor.com/mY77lG2Z-v0AAAAM/sad-cat.gif"
+            "https://media.tenor.com/I769_8uL_8AAAAAM/cat-crying.gif"
         ];
+
+        // Precarga de imágenes para que no haya demoras
+        fotosGatos.forEach(src => { const img = new Image(); img.src = src; });
 
         function mostrarError(msg) {
             const errDiv = document.getElementById('error');
@@ -277,14 +288,23 @@
 
             const btnSi = document.getElementById('btnSi');
             const btnNo = document.getElementById('btnNo');
+            const contenedorGato = document.getElementById('contenedor-gato');
             const gato = document.getElementById('gato-triste');
+            const fallback = document.getElementById('gato-fallback');
             const mensaje = document.getElementById('mensaje-segura');
 
             btnSi.style.transform = `scale(${escalaSi})`;
             btnNo.style.transform = `scale(${escalaNo})`;
 
-            gato.src = fotosGatos[indiceRechazo % fotosGatos.length];
+            // Mostrar el contenedor visual
+            contenedorGato.style.display = 'flex';
+            
+            // Restablecer por si falló antes
             gato.style.display = 'block';
+            fallback.style.display = 'none';
+
+            // Cargar imagen
+            gato.src = fotosGatos[indiceRechazo % fotosGatos.length];
             mensaje.innerText = mensajesSegura[indiceRechazo % mensajesSegura.length];
 
             indiceRechazo++;
@@ -304,5 +324,5 @@
         }
     </script>
 </body>
-                </html>
-                
+    </html>
+    
