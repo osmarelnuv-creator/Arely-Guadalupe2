@@ -14,7 +14,7 @@
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
         h2 { color: #880e4f; font-size: 1.1rem; margin-bottom: 20px; }
         .btn-container { display: grid; grid-template-columns: 1fr; gap: 10px; }
-        button { padding: 12px; border: none; border-radius: 12px; cursor: pointer; background-color: #f06292; color: white; font-weight: bold; transition: 0.3s; }
+        button { padding: 12px; border: none; border-radius: 12px; cursor: pointer; background-color: #f06292; color: white; font-weight: bold; }
         input { width: 85%; padding: 12px; margin-bottom: 15px; border: 2px solid #f06292; border-radius: 10px; text-align: center; }
         #error { color: #d32f2f; font-size: 0.85rem; margin-top: 10px; min-height: 30px; font-weight: bold; }
         .scroll-container { height: 200px; overflow-y: scroll; scrollbar-width: none; border-top: 1px solid #fce4ec; padding-top: 10px; }
@@ -64,22 +64,20 @@
         }
         #p-carta { margin: 0; white-space: pre-wrap; word-wrap: break-word; }
 
-        /* PROPUESTA FINAL (CORREGIDA) */
-        #pantalla-propuesta { 
+        /* PROPUESTA FINAL */
+        #pantalla-propuesta, #pantalla-final-si, #pantalla-final-no { 
             display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
             z-index: 30; flex-direction: column; align-items: center; justify-content: center; 
+            background-color: #fce4ec;
         }
-        #contenedor-propuesta { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 20px; width: 90%; max-width: 400px; }
-        #gato-triste { width: 150px; height: 150px; border-radius: 15px; display: none; margin-bottom: 10px; object-fit: cover; }
-        #mensaje-segura { color: #880e4f; font-weight: bold; font-size: 1.1rem; min-height: 1.2em; }
-
-        #pantalla-final-si { 
-            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            z-index: 40; flex-direction: column; align-items: center; justify-content: center; 
-        }
+        #pantalla-final-no { background-color: black; color: white; padding: 20px; }
+        
+        /* Ajustes específicos para los gatos y botones de la propuesta */
+        #gato-triste { width: 160px; height: 160px; border-radius: 15px; display: none; object-fit: cover; margin-top: 15px; }
+        #mensaje-segura { color: #880e4f; font-weight: bold; font-size: 1.2rem; min-height: 1.5em; margin: 10px 0; }
+        
         .btn-si { background-color: #4caf50; font-size: 1.3rem; padding: 15px 40px; margin-top: 20px; transition: 0.3s; }
-        /* El No se queda quieto, solo cambia de tamaño */
-        .btn-no { background-color: #f44336; margin-top: 10px; transition: 0.3s; position: relative; }
+        .btn-no { background-color: #f44336; margin-top: 10px; position: relative; transition: 0.3s; }
     </style>
 </head>
 <body>
@@ -160,17 +158,15 @@
     </div>
 
     <div id="pantalla-propuesta">
-        <div id="contenedor-propuesta" class="card">
-            <h2>Arely Guadalupe Arias Gómez</h2>
-            <h1 style="color: #880e4f;">¿Quieres ser mi novia?</h1>
-            
-            <img id="gato-triste" src="" alt="Gato triste">
-            <p id="mensaje-segura"></p>
-            
-            <div class="btn-container" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
-                <button class="btn-si" id="btnSi" onclick="aceptar()">SÍ ❤️</button>
-                <button class="btn-no" id="btnNo" onclick="rechazar()">No</button>
-            </div>
+        <h2>Arely Guadalupe Arias Gómez</h2>
+        <h1 style="color: #880e4f;">¿Quieres ser mi novia?</h1>
+        
+        <img id="gato-triste" src="" alt="Gato triste">
+        <p id="mensaje-segura"></p>
+        
+        <div class="btn-container" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            <button class="btn-si" id="btnSi" onclick="aceptar()">SÍ ❤️</button>
+            <button class="btn-no" id="btnNo" onclick="rechazar()">No</button>
         </div>
     </div>
 
@@ -179,11 +175,15 @@
         <p style="font-size: 1.5rem;">Te amo muchísimo amorcito 🥰</p>
     </div>
 
+    <div id="pantalla-final-no">
+        <h1>Si es cierto, tras que tu novio es el Héctor 💔</h1>
+    </div>
+
     <script>
         let corazonesAtrapados = 0; let tiempoRestante = 67; let intervaloJuego;
         const textoCarta = "Hola wawalupe hemosa espero que estés muy bien solo quiero decirte que te amo mucho muchísimo con todo mi corazón y mi ser eres la mejor te amo te adoro y ni con todas las palabras del mundo podré describir lo mucho que te amo y ps eres muy importante para mí y muy especial y quiero decirte que me gustas y eres muy linda me gusta todo de ti,tu forma de ser, tu caracter,tu carita linda y todo de ti te amoooo mucho encerio mucho muchísimo eres la mejor te adoro eres la mejor nunca lo olvides y solo te te amo Ati y nadie más y solo me gustas tu y pienso en ti todos los días te amoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo";
 
-        // Lógica de la Propuesta con Gatitos
+        // Variables añadidas para la propuesta
         let escalaSi = 1;
         let escalaNo = 1;
         let indiceRechazo = 0;
@@ -270,12 +270,12 @@
             document.getElementById('pantalla-propuesta').style.display = 'flex';
         }
 
-        // LÓGICA CORREGIDA DEL BOTÓN NO (No travieso, chantaje emocional)
+        // LÓGICA DEL BOTÓN NO Y GATITOS
         function rechazar() {
-            escalaSi += 0.3; // El Sí crece un 30%
-            escalaNo -= 0.15; // El No se encoge un 15%
+            escalaSi += 0.3; // El botón SÍ se hace un 30% más grande
+            escalaNo -= 0.15; // El botón No se hace más pequeño
             
-            // Límite mínimo para que no desaparezca el No
+            // Límite para que el botón "No" no desaparezca por completo
             if(escalaNo < 0.3) escalaNo = 0.3;
 
             const btnSi = document.getElementById('btnSi');
@@ -283,15 +283,15 @@
             const gato = document.getElementById('gato-triste');
             const mensaje = document.getElementById('mensaje-segura');
 
-            // Aplicar las escalas (cambio de tamaño)
+            // Aplicar los cambios de tamaño a los botones
             btnSi.style.transform = `scale(${escalaSi})`;
             btnNo.style.transform = `scale(${escalaNo})`;
 
-            // Mostrar el gato triste correspondiente
+            // Mostrar el gatito correspondiente
             gato.src = fotosGatos[indiceRechazo % fotosGatos.length];
             gato.style.display = 'block';
 
-            // Cambiar el mensaje de chantaje
+            // Mostrar el texto de chantaje correspondiente
             mensaje.innerText = mensajesSegura[indiceRechazo % mensajesSegura.length];
 
             indiceRechazo++;
