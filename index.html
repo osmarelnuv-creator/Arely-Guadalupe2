@@ -177,7 +177,7 @@
 
     <script>
         let corazonesAtrapados = 0; 
-        let tiempoRestante = 45; // MÁS TIEMPO: 45 segundos
+        let tiempoRestante = 45; // TIEMPO AJUSTADO: 45 segundos
         let escalaSi = 1;
         let escalaNo = 1;
         let indiceRechazo = 0;
@@ -227,7 +227,7 @@
             c.style.top = Math.random() * (window.innerHeight - 60) + 'px';
             c.onclick = () => { corazonesAtrapados++; document.getElementById('puntuacion').innerText = corazonesAtrapados; c.remove(); if (corazonesAtrapados >= 50) finalJuego(true); else crearCorazon(); };
             document.getElementById('corazones-juego').appendChild(c);
-            setTimeout(() => { if(c.parentElement) { c.remove(); crearCorazon(); } }, 650); // Más tiempo en pantalla
+            setTimeout(() => { if(c.parentElement) { c.remove(); crearCorazon(); } }, 650);
         }
         function finalJuego(ganado) {
             clearInterval(intervaloJuego); document.getElementById('juego-container').style.display = 'none';
@@ -270,5 +270,5 @@
         }
     </script>
 </body>
-    </html>
+            </html>
     
