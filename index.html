@@ -30,6 +30,7 @@
             padding: 14px; border: none; border-radius: 15px; cursor: pointer; 
             background-color: var(--rosa-fuerte); color: white; font-weight: bold; 
             transition: transform 0.2s, background-color 0.2s; box-shadow: 0 4px 10px rgba(240, 98, 146, 0.3);
+            width: 100%; margin-bottom: 10px;
         }
         button:active { transform: scale(0.95); }
 
@@ -67,47 +68,43 @@
             z-index: 30; flex-direction: column; align-items: center; justify-content: center; padding: 20px;
         }
         #pantalla-final-no { background-color: #000; color: #fff; }
-        .btn-si { background-color: #4caf50; font-size: 1.5rem; padding: 15px 50px; }
-        .btn-no { background-color: #f44336; font-size: 0.9rem; transition: 0.3s; }
+        .btn-si { background-color: #4caf50; font-size: 1.5rem; padding: 15px 50px; width: auto; }
+        .btn-no { background-color: #f44336; font-size: 0.9rem; transition: 0.3s; width: auto; position: relative; }
     </style>
 </head>
 <body>
 
     <div id="contenedor" class="card fade-in">
         <div id="inicio" class="seccion">
-            <h2>Hola Arely ❤️ antes de iniciar, ¿qué tan buena es tu memoria?</h2>
-            <button onclick="empezar()" style="width: 100%;">¡Acepto el reto! 🥰</button>
+            <h2>Hola Arely ❤️ antes de iniciar, responde unas preguntas para ver si todavía me recuerdas...</h2>
+            <button onclick="empezar()">Bueno amor mío 🥰</button>
         </div>
 
         <div id="preg1" class="seccion" style="display:none;">
             <h2>¿Cuál es mi color favorito?</h2>
-            <div style="display: grid; gap: 10px;">
-                <button onclick="mostrarError('¡Nop! Intenta de nuevo 😜')">Negro</button>
-                <button onclick="siguiente('preg1', 'preg2')">Rojo</button>
-                <button onclick="mostrarError('Casi, pero no 💔')">Azul</button>
-            </div>
+            <button onclick="mostrarError('¡Nop! Eres una tontita Guadalupe 🥰')">Negro</button>
+            <button onclick="siguiente('preg1', 'preg2')">Rojo</button>
+            <button onclick="mostrarError('Casi, pero no 💔')">Azul</button>
         </div>
 
         <div id="preg2" class="seccion" style="display:none;">
             <h2>¿Cuál es mi anime favorito?</h2>
-            <input type="text" id="animeInput" placeholder="Pista: Empieza con M o B...">
-            <button onclick="checkAnime()" style="width: 100%;">Validar</button>
+            <input type="text" id="animeInput" placeholder="Escribe aquí...">
+            <button onclick="checkAnime()">Siguiente</button>
         </div>
 
         <div id="preg3" class="seccion" style="display:none;">
             <h2>¿Cuál es mi comida favorita?</h2>
-            <div style="display: grid; gap: 10px;">
-                <button onclick="mostrarError('Eso me gusta, pero no es lo top...')">Wewito con jamón</button>
-                <button onclick="siguiente('preg3', 'preg4')">Maruchan y Wewito (Ambos)</button>
-            </div>
+            <button onclick="mostrarError('Eso me gusta, pero no es lo top...')">Wewito con jamón</button>
+            <button onclick="siguiente('preg3', 'preg4')">Ambos (Maruchan y Wewito)</button>
         </div>
 
         <div id="preg4" class="seccion" style="display:none;">
-            <h2>Pregunta final: ¿Qué luna había cuando nací?</h2>
-            <div style="height: 150px; overflow-y: scroll; border: 1px solid #eee; padding: 10px; border-radius: 10px;">
-                <p onclick="mostrarError('Frío frío...')">Luna Llena</p>
-                <p onclick="mostrarError('Tampoco...')">Luna Nueva</p>
-                <div style="height: 1200px;"></div>
+            <h2>¿Qué luna había cuando nací?</h2>
+            <div style="height: 180px; overflow-y: scroll; border: 1px solid #eee; padding: 10px; border-radius: 10px;">
+                <p onclick="mostrarError('Nop... 💔')">Luna Llena</p>
+                <p onclick="mostrarError('Tampoco... 💔')">Luna Nueva</p>
+                <div style="height: 1300px;"></div>
                 <button onclick="irAFinal()" style="background: black;">Nací de día ☀️</button>
             </div>
         </div>
@@ -127,7 +124,7 @@
         </div>
         <div id="papel-carta">
             <p id="p-carta"></p>
-            <button id="btn-sig-propuesta" style="display:none; margin-top: 20px; width: 100%;" onclick="irAPropuesta()">Siguiente ❤️</button>
+            <button id="btn-sig-propuesta" style="display:none; margin-top: 20px;" onclick="irAPropuesta()">Siguiente ❤️</button>
         </div>
     </div>
 
@@ -135,15 +132,17 @@
         <div class="card">
             <h2 style="font-size: 1.5rem;">Arely Guadalupe Arias Gómez</h2>
             <h1 style="color: var(--vino);">¿Quieres ser mi novia?</h1>
-            <button class="btn-si" onclick="aceptar()">¡SÍ! ❤️</button>
-            <button class="btn-no" id="btnNo" onmouseover="moverNo()">No</button>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                <button class="btn-si" onclick="aceptar()">SÍ ❤️</button>
+                <button class="btn-no" id="btnNo" onmouseover="moverNo()" onclick="rechazar()">No</button>
+            </div>
         </div>
     </div>
 
     <div id="pantalla-final-si">
         <h1 style="font-size: 3rem;">🥰</h1>
-        <h1 style="color: var(--vino);">¡LO SABÍA!</h1>
-        <p style="font-size: 1.4rem;">Te amo muchísimo amorcito. Gracias por decir que sí. ❤️</p>
+        <h1 style="color: var(--vino);">¡QUÉ BUENO QUE DIJISTE QUE SÍ!</h1>
+        <p style="font-size: 1.4rem;">Te amo muchísimo amorcito. ❤️</p>
     </div>
 
     <div id="pantalla-final-no">
@@ -164,7 +163,7 @@
         function mostrarError(msg) {
             const e = document.getElementById('error');
             e.innerText = msg;
-            setTimeout(() => e.innerText = "", 2000);
+            setTimeout(() => e.innerText = "", 1500);
         }
 
         function siguiente(actual, sig) {
@@ -174,10 +173,10 @@
 
         function checkAnime() {
             const val = document.getElementById('animeInput').value.toLowerCase();
-            if(val.includes('mushoku') || val.includes('clover') || val.includes('bunny') || val.includes('rascal')) {
+            if(val.includes('mushoku') || val.includes('clover') || val.includes('bunny') || val.includes('rascal') || val.includes('senpai')) {
                 siguiente('preg2', 'preg3');
             } else {
-                mostrarError('¡Ese no es! Pista: El de la nalgadita... 😂');
+                mostrarError('eres una tontita Guadalupe 🥰');
             }
         }
 
@@ -189,7 +188,7 @@
 
         function soltarCorazon() {
             if(puntos >= 50) { 
-                document.getElementById('juego-container').innerHTML = `<div class="card"><h2>¡Eres una pro!</h2><button onclick="mostrarCarta()">Ver mi sorpresa final</button></div>`;
+                document.getElementById('juego-container').innerHTML = `<div class="card"><h2>¡ERES UNA EXPERTA! ❤️</h2><p>Atrapaste todos los corazones</p><button onclick="mostrarCarta()">Siguiente</button></div>`;
                 return; 
             }
             const c = document.createElement('div');
@@ -215,7 +214,7 @@
                 if(i < texto.length) {
                     p.innerText += texto.charAt(i);
                     i++;
-                    setTimeout(escribir, 30);
+                    setTimeout(escribir, 35);
                 } else {
                     document.getElementById('btn-sig-propuesta').style.display = 'block';
                 }
@@ -231,8 +230,8 @@
         function moverNo() {
             const btn = document.getElementById('btnNo');
             btn.style.position = "absolute";
-            btn.style.top = Math.random() * 80 + "%";
-            btn.style.left = Math.random() * 80 + "%";
+            btn.style.top = Math.random() * 85 + "%";
+            btn.style.left = Math.random() * 85 + "%";
         }
 
         function aceptar() {
