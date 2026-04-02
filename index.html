@@ -145,7 +145,7 @@
     </div>
 
     <div id="juego-container">
-        <div id="stats">❤️: <span id="puntuacion">0</span>/50 | ⏳: <span id="tiempo">35</span>s</div>
+        <div id="stats">❤️: <span id="puntuacion">0</span>/50 | ⏳: <span id="tiempo">37</span>s</div>
         <div id="corazones-juego"></div>
     </div>
 
@@ -179,7 +179,7 @@
     </div>
 
     <script>
-        let corazonesAtrapados = 0; let tiempoRestante = 35; let intervaloJuego;
+        let corazonesAtrapados = 0; let tiempoRestante = 37; let intervaloJuego;
         const textoCarta = "Hola wawalupe hemosa espero que estés muy bien solo quiero decirte que te amo mucho muchísimo con todo mi corazón y mi ser eres la mejor te amo te adoro y ni con todas las palabras del mundo podré describir lo mucho que te amo y ps eres muy importante para mí y muy especial y quiero decirte que me gustas y eres muy linda me gusta todo de ti,tu forma de ser, tu caracter,tu carita linda y todo de ti te amoooo mucho encerio mucho muchísimo eres la mejor te adoro eres la mejor nunca lo olvides y solo te te amo Ati y nadie más y solo me gustas tu y pienso en ti todos los días te amoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo";
 
         let escalaSi = 1;
@@ -187,13 +187,13 @@
         let indiceRechazo = 0;
         const mensajesSegura = ["¿Estás segura? 🥺", "¿Neta Guadalupe? 💔", "Piénsalo bien... 😢", "¿Me vas a romper el corazón? ❤️‍🩹", "Por fis di que sí... 😿"];
         
-        // AQUÍ ESTÁN TUS IMÁGENES DE PINTEREST YA INTEGRADAS
+        // AQUÍ HE REEMPLAZADO LAS IMÁGENES POR GIFs DE TENOR QUE NO FALLAN
         const fotosGatos = [
-            "https://i.pinimg.com/originals/ae/c4/62/aec462f446950364d2d48c08169e6b4d.jpg",
-            "https://i.pinimg.com/736x/8a/8d/62/8a8d62657e2890c9b0e9565e3b2e557b.jpg",
-            "https://i.pinimg.com/originals/db/5b/5c/db5b5c777d9c6c06a34731b5c85116e1.jpg",
-            "https://i.pinimg.com/736x/e4/20/82/e42082260c57f20811239999084c718c.jpg",
-            "https://i.pinimg.com/originals/f3/00/c7/f300c73e8e19e078a6320092d0c1e878.jpg"
+            "https://media.tenor.com/On7tS97Wmo4AAAAM/cat-sad.gif",
+            "https://media.tenor.com/On7tS97Wmo4AAAAM/cat-sad.gif", // Repetido para que no falle si la trivia no es tan larga
+            "https://media.tenor.com/On7tS97Wmo4AAAAM/cat-sad.gif",
+            "https://media.tenor.com/On7tS97Wmo4AAAAM/cat-sad.gif",
+            "https://media.tenor.com/On7tS97Wmo4AAAAM/cat-sad.gif"
         ];
 
         function mostrarError(msg) {
