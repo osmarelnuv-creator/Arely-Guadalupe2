@@ -9,7 +9,7 @@
         body { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background-color: #fce4ec; font-family: 'Arial', sans-serif; text-align: center; overflow: hidden; position: relative; }
         #progreso-container { width: 60%; height: 5px; background: #f8bbd0; border-radius: 10px; margin-bottom: 20px; display: none; }
         #barra { width: 0%; height: 100%; background: #f06292; border-radius: 10px; transition: 0.5s; }
-        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); width: 85%; max-width: 380px; z-index: 5; }
+        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); width: 85%; max-width: 380px; z-index: 5; transition: 0.5s; }
         .vibrar { animation: shake 0.2s; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
         h2 { color: #880e4f; font-size: 1.1rem; margin-bottom: 20px; }
@@ -20,10 +20,10 @@
         .scroll-container { height: 200px; overflow-y: scroll; scrollbar-width: none; border-top: 1px solid #fce4ec; padding-top: 10px; }
         .scroll-container::-webkit-scrollbar { display: none; }
         .espacio-largo { height: 1600px; } 
-        /* Texto secreto ahora en color NEGRO */
         .respuesta-secreta { font-size: 0.6rem; color: #000000; cursor: pointer; user-select: none; display: inline-block; margin-top: 10px; font-weight: bold; }
         .seccion { display: none; }
         #inicio { display: block; }
+        
         #juego-container { 
             display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
             background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
@@ -31,10 +31,50 @@
         }
         .corazon { position: absolute; font-size: 2.5rem; cursor: pointer; user-select: none; }
         #stats { background: rgba(255,255,255,0.4); padding: 8px 15px; border-radius: 15px; color: #880e4f; font-weight: bold; margin-bottom: 20px; }
+        
+        #pantalla-carta { 
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: #fce4ec; z-index: 20; flex-direction: column; align-items: center; justify-content: center; 
+        }
+
+        #seccion-sobre { position: relative; width: 280px; height: 180px; }
+        #sobre-visual {
+            width: 100%; height: 100%; background-color: #f8bbd0; border-radius: 5px;
+            position: relative; box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        #sobre-visual::after {
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(160deg, transparent 50%, #f48fb1 50.5%);
+        }
+        #sobre-visual::before {
+            content: ""; position: absolute; top: 0; right: 0; width: 100%; height: 100%;
+            background: linear-gradient(-160deg, transparent 50%, #f48fb1 50.5%);
+        }
+
+        #btn-abrir { 
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 75px; height: 75px; border-radius: 50%; background-color: #f06292; color: white; 
+            font-weight: bold; font-size: 0.9rem; border: 4px solid white; cursor: pointer; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 21; transition: 0.3s; 
+        }
+        #btn-abrir:hover { transform: translate(-50%, -50%) scale(1.1); background-color: #d81b60; }
+
+        #papel-carta { 
+            display: none; background: #fffde7;
+            background-image: url('https://www.transparenttextures.com/patterns/papyros.png');
+            width: 85%; max-width: 350px; padding: 35px; border-radius: 5px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: left; 
+            font-family: 'Georgia', serif; font-style: italic;
+            font-size: 1.1rem; color: #4e342e; line-height: 1.6; max-height: 80vh; overflow-y: auto; 
+            border-left: 12px solid #f06292;
+        }
+        #p-carta { margin: 0; white-space: pre-wrap; word-wrap: break-word; }
     </style>
 </head>
 <body>
     <div id="progreso-container"><div id="barra"></div></div>
+    
     <div class="card" id="contenedor">
         <div id="inicio" class="seccion">
             <h2>antes de iniciar responde estás preguntas para ver si todavía recuerdas cosas de mi</h2>
@@ -79,17 +119,39 @@
         </div>
         <div id="error"></div>
     </div>
+
     <div class="card" id="final-temp" style="display: none;">
-        <h2>¡LO LOGRASTE! ❤️</h2>
-        <p>Que Weno que lo completaste tu sola te amo mucho muchísimo</p>
-        <button onclick="iniciarJuego()">un minijuego para mí nubsita 🥺</button>
+        <div id="mensaje-final">
+            <h2>¡LO LOGRASTE! ❤️</h2>
+            <p>Que Weno que lo completaste tu sola te amo mucho muchísimo</p>
+            <button onclick="iniciarJuego()">un minijuego para mí nubsita 🥺</button>
+        </div>
+        <div id="gana-juego" style="display: none;">
+            <h2>¡ERES UNA EXPERTA! ❤️</h2>
+            <p>¡Atrapaste todos los corazones!</p>
+            <button onclick="mostrarPantallaCarta()">Siguiente</button>
+        </div>
     </div>
+
     <div id="juego-container">
         <div id="stats">❤️: <span id="puntuacion">0</span>/50 | ⏳: <span id="tiempo">67</span>s</div>
         <div id="corazones-juego"></div>
     </div>
+
+    <div id="pantalla-carta">
+        <div id="seccion-sobre">
+            <div id="sobre-visual"></div>
+            <button id="btn-abrir" onclick="abrirCarta()">ABRIR</button>
+        </div>
+        <div id="papel-carta">
+            <p id="p-carta"></p>
+        </div>
+    </div>
+
     <script>
         let corazonesAtrapados = 0; let tiempoRestante = 67; let intervaloJuego;
+        const textoCarta = "Hola wawalupe hemosa espero que estés muy bien solo quiero decirte que te amo mucho muchísimo con todo mi corazón y mi ser eres la mejor te amo te adoro y ni con todas las palabras del mundo podré describir lo mucho que te amo y ps eres muy importante para mí y muy especial y quiero decirte que me gustas y eres muy linda me gusta todo de ti,tu forma de ser, tu caracter,tu carita linda y todo de ti te amoooo mucho encerio mucho muchísimo eres la mejor te adoro eres la mejor nunca lo olvides y solo te te amo Ati y nadie más y solo me gustas tu y pienso en ti todos los días te amoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo";
+
         function mostrarError(msg) {
             const errDiv = document.getElementById('error');
             errDiv.innerText = msg;
@@ -132,8 +194,36 @@
         function finalJuego(ganado) {
             clearInterval(intervaloJuego); document.getElementById('juego-container').style.display = 'none';
             document.getElementById('final-temp').style.display = 'block';
-            if(ganado) { confetti(); document.getElementById('final-temp').innerHTML = "<h2>¡ERES UNA EXPERTA! ❤️</h2><p>¡Te amo muchísimo!</p><button onclick='location.reload()'>Volver a jugar</button>"; }
+            if(ganado) { 
+                confetti(); 
+                document.getElementById('mensaje-final').style.display = 'none';
+                document.getElementById('gana-juego').style.display = 'block';
+            }
             else { document.getElementById('final-temp').innerHTML = "<h2>TIEMPO AGOTADO 😢</h2><button onclick='location.reload()'>Reintentar</button>"; }
+        }
+
+        function mostrarPantallaCarta() {
+            document.getElementById('final-temp').style.display = 'none';
+            document.getElementById('pantalla-carta').style.display = 'flex';
+        }
+
+        function abrirCarta() {
+            document.getElementById('seccion-sobre').style.display = 'none';
+            document.getElementById('papel-carta').style.display = 'block';
+            const elementoCarta = document.getElementById('p-carta');
+            escribirCarta(elementoCarta, textoCarta);
+        }
+
+        function escribirCarta(elemento, texto) {
+            let i = 0;
+            function escribir() {
+                if (i < texto.length) {
+                    elemento.innerText += texto.charAt(i);
+                    i++;
+                    setTimeout(escribir, 40);
+                }
+            }
+            escribir();
         }
     </script>
 </body>
