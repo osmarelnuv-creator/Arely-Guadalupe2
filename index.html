@@ -3,90 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Para Arely Guadalupe ❤️</title>
+    <title>Para Arely ❤️</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
-        body { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background-color: #fce4ec; font-family: 'Arial', sans-serif; text-align: center; overflow-x: hidden; }
-        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); width: 85%; max-width: 380px; z-index: 5; position: relative; }
+        body { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background-color: #fce4ec; font-family: 'Arial', sans-serif; text-align: center; overflow: hidden; position: relative; }
+        
+        /* BARRA DE PROGRESO */
+        #progreso-container { width: 60%; height: 5px; background: #f8bbd0; border-radius: 10px; margin-bottom: 20px; display: none; }
+        #barra { width: 0%; height: 100%; background: #f06292; border-radius: 10px; transition: 0.5s; }
+
+        /* TARJETAS */
+        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); width: 85%; max-width: 380px; z-index: 5; transition: 0.5s; position: relative; }
+        .vibrar { animation: shake 0.2s; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+        
         h2 { color: #880e4f; font-size: 1.1rem; margin-bottom: 20px; }
-        button { padding: 12px; border: none; border-radius: 12px; cursor: pointer; background-color: #f06292; color: white; font-weight: bold; transition: 0.3s; margin: 5px; }
-        input { width: 80%; padding: 12px; margin-bottom: 15px; border: 2px solid #f06292; border-radius: 10px; text-align: center; }
-        #error { color: #d32f2f; font-size: 0.85rem; height: 20px; margin-top: 10px; }
+        .btn-container { display: grid; grid-template-columns: 1fr; gap: 10px; }
+        button { padding: 12px; border: none; border-radius: 12px; cursor: pointer; background-color: #f06292; color: white; font-weight: bold; transition: 0.2s; }
+        input { width: 85%; padding: 12px; margin-bottom: 15px; border: 2px solid #f06292; border-radius: 10px; text-align: center; }
+        #error { color: #d32f2f; font-size: 0.85rem; margin-top: 10px; min-height: 30px; font-weight: bold; }
+
+        /* TRIVIA - SCROLL LUNA */
+        .scroll-container { height: 200px; overflow-y: scroll; scrollbar-width: none; border-top: 1px solid #fce4ec; padding-top: 10px; }
+        .scroll-container::-webkit-scrollbar { display: none; }
+        .espacio-largo { height: 1600px; } 
+        .respuesta-secreta { font-size: 0.6rem; color: #000000; cursor: pointer; user-select: none; display: inline-block; margin-top: 10px; font-weight: bold; }
+        
         .seccion { display: none; }
         #inicio { display: block; }
         
-        /* JUEGO */
-        #juego-container { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fad0c4; z-index: 100; flex-direction: column; align-items: center; justify-content: center; }
-        .corazon { position: absolute; font-size: 2.5rem; cursor: pointer; user-select: none; z-index: 101; }
+        /* JUEGO CORAZONES */
+        #juego-container { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%); z-index: 50; flex-direction: column; align-items: center; justify-content: center; }
+        .corazon { position: absolute; font-size: 2.5rem; cursor: pointer; user-select: none; }
+        #stats { background: rgba(255,255,255,0.4); padding: 8px 15px; border-radius: 15px; color: #880e4f; font-weight: bold; margin-bottom: 20px; z-index: 51; }
         
         /* CARTA */
-        #pantalla-carta { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fce4ec; z-index: 200; flex-direction: column; align-items: center; justify-content: center; }
-        #papel-carta { background: #fffde7; width: 80%; max-width: 350px; padding: 25px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: left; font-style: italic; max-height: 70vh; overflow-y: auto; display: none; border-left: 8px solid #f06292; }
+        #pantalla-carta { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fce4ec; z-index: 100; flex-direction: column; align-items: center; justify-content: center; }
+        #seccion-sobre { position: relative; width: 280px; height: 180px; }
+        #sobre-visual { width: 100%; height: 100%; background-color: #f8bbd0; border-radius: 5px; position: relative; box-shadow: 0 10px 20px rgba(0,0,0,0.1); overflow: hidden; }
+        #sobre-visual::after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(160deg, transparent 50%, #f48fb1 50.5%); }
+        #sobre-visual::before { content: ""; position: absolute; top: 0; right: 0; width: 100%; height: 100%; background: linear-gradient(-160deg, transparent 50%, #f48fb1 50.5%); }
+        #btn-abrir { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 75px; height: 75px; border-radius: 50%; background-color: #f06292; color: white; font-weight: bold; border: 4px solid white; cursor: pointer; z-index: 101; }
+        #papel-carta { display: none; background: #fffde7; width: 85%; max-width: 350px; padding: 30px; border-radius: 5px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: left; font-family: 'Georgia', serif; font-style: italic; font-size: 1.1rem; line-height: 1.6; max-height: 75vh; overflow-y: auto; border-left: 12px solid #f06292; }
 
-        /* PROPUESTA FINAL (ESTA ES LA QUE FALLABA) */
-        #pantalla-propuesta { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fce4ec; z-index: 300; flex-direction: column; align-items: center; justify-content: center; }
-        #gato-triste { width: 150px; height: 150px; border-radius: 15px; display: none; object-fit: cover; margin-bottom: 10px; }
-        .btn-si { background-color: #4caf50; font-size: 1.2rem; }
-        .btn-no { background-color: #f44336; }
+        /* PROPUESTA (ESTO ES LO QUE CORREGIMOS) */
+        #pantalla-propuesta { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 200; flex-direction: column; align-items: center; justify-content: center; background-color: #fce4ec; }
+        #gato-triste { width: 150px; height: 150px; border-radius: 15px; display: none; margin-bottom: 10px; object-fit: cover; }
+        .btn-si { background-color: #4caf50; font-size: 1.3rem; padding: 15px 40px; margin-top: 15px; }
+        .btn-no { background-color: #f44336; margin-top: 10px; }
+
+        #pantalla-final-si { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 300; flex-direction: column; align-items: center; justify-content: center; background-color: #fce4ec; }
     </style>
 </head>
 <body>
-
-    <div class="card" id="contenedor-principal">
+    <div id="progreso-container"><div id="barra"></div></div>
+    
+    <div class="card" id="contenedor">
         <div id="inicio" class="seccion">
             <h2>antes de iniciar responde estás preguntas para ver si todavía recuerdas cosas de mi</h2>
-            <button onclick="siguiente('preg1')">Bueno amor mío 🥰</button>
+            <div class="btn-container">
+                <button onclick="empezar()">Bueno amor mío 🥰</button>
+                <button style="background-color: #999;" onclick="mostrarError('ok Héctor 💔')">no puto down</button>
+            </div>
         </div>
 
         <div id="preg1" class="seccion">
             <h2>¿Cuál es mi color favorito?</h2>
-            <button onclick="error()">Negro</button>
-            <button onclick="siguiente('preg2')">Rojo</button>
-            <button onclick="error()">Azul</button>
+            <div class="btn-container">
+                <button onclick="mostrarError('eres una tontita Guadalupe 🥰')">Negro</button>
+                <button onclick="actualizarProgreso(1, 'preg2')">Rojo</button>
+                <button onclick="mostrarError('eres una tontita Guadalupe 🥰')">Púrpura</button>
+                <button onclick="mostrarError('eres una tontita Guadalupe 🥰')">Azul</button>
+            </div>
         </div>
 
         <div id="preg2" class="seccion">
             <h2>¿Cuál es mi anime favorito?</h2>
-            <input type="text" id="animeInput" placeholder="Nombre del anime...">
+            <input type="text" id="animeInput" placeholder="Escribe aquí...">
             <button onclick="checkAnime()">Siguiente</button>
         </div>
 
         <div id="preg3" class="seccion">
             <h2>¿Cuál es mi comida favorita?</h2>
-            <button onclick="siguiente('preg4')">Ambos (Wewito y Maruchan)</button>
-            <button onclick="error()">Ninguna</button>
-        </div>
-
-        <div id="preg4" class="seccion">
-            <h2>¿Que tipo de luna era cuando nací? (Sube para buscar)</h2>
-            <div style="height: 150px; overflow-y: scroll; border: 1px solid #ddd; padding: 10px;">
-                <p>Luna Llena</p><p>Luna Nueva</p><div style="height: 800px;"></div>
-                <p onclick="siguiente('final-trivia')" style="cursor:pointer; color:red; font-weight:bold;">Naci de día</p>
+            <div class="btn-container">
+                <button onclick="mostrarError('eres una tontita Guadalupe 🥰')">Wewito con jamón</button>
+                <button onclick="mostrarError('eres una tontita Guadalupe 🥰')">Maruchan</button>
+                <button onclick="actualizarProgreso(3, 'preg4')">Ambos</button>
+                <button onclick="mostrarError('eres una tontita Guadalupe 🥰')">Ninguna</button>
             </div>
         </div>
 
-        <div id="final-trivia" class="seccion">
-            <h2>¡LO LOGRASTE! ❤️</h2>
-            <p>Te amo mucho muchísimo. ¿Jugamos?</p>
-            <button onclick="iniciarJuego()">¡Sí, vamos! 🥺</button>
+        <div id="preg4" class="seccion">
+            <h2>¿Que tipo de luna era cuando nací?</h2>
+            <div class="scroll-container">
+                <button style="width:90%; margin-bottom:10px;" onclick="mostrarError('💔')">Luna llena</button>
+                <button style="width:90%; margin-bottom:10px;" onclick="mostrarError('💔')">Luna menguante</button>
+                <button style="width:90%; margin-bottom:10px;" onclick="mostrarError('💔')">Luna creciente</button>
+                <button style="width:90%; margin-bottom:10px;" onclick="mostrarError('💔')">Media luna</button>
+                <div class="espacio-largo"></div>
+                <span class="respuesta-secreta" onclick="actualizarProgreso(4, 'final-temp')">Naci de día</span>
+            </div>
         </div>
         <div id="error"></div>
     </div>
 
+    <div class="card" id="final-temp" style="display: none;">
+        <div id="mensaje-final">
+            <h2>¡LO LOGRASTE! ❤️</h2>
+            <p>Que Weno que lo completaste tu sola te amo mucho muchísimo</p>
+            <button onclick="iniciarJuego()">un minijuego para mí nubsita 🥺</button>
+        </div>
+        <div id="gana-juego" style="display: none;">
+            <h2>¡ERES UNA EXPERTA! ❤️</h2>
+            <p>¡Atrapaste todos los corazones!</p>
+            <button onclick="mostrarPantallaCarta()">Siguiente</button>
+        </div>
+    </div>
+
     <div id="juego-container">
-        <div style="margin-bottom:20px; font-weight:bold;">❤️: <span id="puntuacion">0</span>/50 | ⏳: <span id="tiempo">45</span>s</div>
+        <div id="stats">❤️: <span id="puntuacion">0</span>/50 | ⏳: <span id="tiempo">67</span>s</div>
         <div id="area-juego"></div>
     </div>
 
     <div id="pantalla-carta">
-        <button id="btn-abrir" onclick="abrirCarta()">ABRIR CARTA ✉️</button>
-        <div id="papel-carta"><p id="p-carta"></p></div>
-        <button id="btn-ir-propuesta" style="display:none; margin-top:20px;" onclick="mostrarPropuesta()">Siguiente ❤️</button>
+        <div id="seccion-sobre">
+            <div id="sobre-visual"></div>
+            <button id="btn-abrir" onclick="abrirCarta()">ABRIR</button>
+        </div>
+        <div id="papel-carta">
+            <p id="p-carta"></p>
+            <button id="btn-sig-final" style="display:none; margin-top:20px;" onclick="irAPropuesta()">Siguiente</button>
+        </div>
     </div>
 
     <div id="pantalla-propuesta">
         <div class="card">
-            <h2 style="font-size: 1.5rem;">Arely Guadalupe...</h2>
+            <h2 style="font-size: 1.3rem;">Para Arely ❤️</h2>
             <h1 style="color: #880e4f; margin-bottom: 20px;">¿Quieres ser mi novia?</h1>
             <img id="gato-triste" src="" alt="Gato">
             <p id="mensaje-segura" style="font-weight:bold; color:#880e4f;"></p>
@@ -95,70 +147,64 @@
         </div>
     </div>
 
+    <div id="pantalla-final-si">
+        <h1>¡SÍÍÍ! ❤️</h1>
+        <p style="font-size: 1.5rem;">Sabía que dirías que sí, te amo muchísimo 🥰</p>
+    </div>
+
     <script>
-        let corazones = 0; let tiempo = 45; let escalaSi = 1; let escalaNo = 1; let iGato = 0;
+        let corazones = 0; let tiempo = 67; let escalaSi = 1; let escalaNo = 1; let iGato = 0; let timer;
         const texto = "Hola wawalupe hemosa espero que estés muy bien solo quiero decirte que te amo mucho muchísimo con todo mi corazón y mi ser eres la mejor te amo te adoro y ni con todas las palabras del mundo podré describir lo mucho que te amo y ps eres muy importante para mí y muy especial y quiero decirte que me gustas y eres muy linda me gusta todo de ti,tu forma de ser, tu caracter,tu carita linda y todo de ti te amoooo mucho encerio mucho muchísimo eres la mejor te adoro eres la mejor nunca lo olvides y solo te te amo Ati y nadie más y solo me gustas tu y pienso en ti todos los días te amoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo";
-        const msgSegura = ["¿Estás segura? 🥺", "¿Neta Guadalupe? 💔", "Piénsalo bien... 😢", "Me vas a romper el corazón... 😿"];
+        const msgSeg = ["¿Estás segura? 🥺", "¿Neta Guadalupe? 💔", "Piénsalo bien... 😢", "Me vas a romper el corazón... 😿"];
         const fotos = ["https://i.pinimg.com/originals/ae/c4/62/aec462f446950364d2d48c08169e6b4d.jpg", "https://i.redd.it/e7v2b6f1b7421.jpg", "https://i.pinimg.com/736x/8a/8d/62/8a8d62657e2890c9b0e9565e3b2e557b.jpg", "https://i.ytimg.com/vi/S7vJ_e0lEic/hqdefault.jpg"];
 
-        function siguiente(id) { document.querySelectorAll('.seccion').forEach(s => s.style.display = 'none'); document.getElementById(id).style.display = 'block'; }
-        function error() { const e = document.getElementById('error'); e.innerText = "eres una tontita Guadalupe 🥰"; setTimeout(() => e.innerText = "", 1500); }
-        function checkAnime() { if(document.getElementById('animeInput').value.toLowerCase().match(/mushoku|clover|bunny|rascal|senpai/)) siguiente('preg3'); else error(); }
+        function mostrarError(msg) { const e = document.getElementById('error'); e.innerText = msg; document.getElementById('contenedor').classList.add('vibrar'); setTimeout(() => { e.innerText = ""; document.getElementById('contenedor').classList.remove('vibrar'); }, 1200); }
+        function empezar() { document.getElementById('progreso-container').style.display = 'block'; actualizarProgreso(0, 'preg1'); }
+        function actualizarProgreso(p, id) { document.getElementById('barra').style.width = (p/4)*100+'%'; document.querySelectorAll('.seccion, .card').forEach(s => s.style.display = 'none'); if(id==='final-temp'){confetti(); document.getElementById('final-temp').style.display='block'; document.getElementById('progreso-container').style.display='none';} else {document.getElementById('contenedor').style.display='block'; document.getElementById(id).style.display='block';} }
+        function checkAnime() { const r = document.getElementById('animeInput').value.toLowerCase(); if(r.match(/mushoku|clover|bunny|rascal|senpai/)) actualizarProgreso(2,'preg3'); else mostrarError('eres una tontita Guadalupe 🥰'); }
         
         function iniciarJuego() {
-            document.getElementById('contenedor-principal').style.display = 'none';
+            document.getElementById('final-temp').style.display = 'none';
             document.getElementById('juego-container').style.display = 'flex';
-            let timer = setInterval(() => {
-                tiempo--; document.getElementById('tiempo').innerText = tiempo;
-                if(tiempo <= 0) { clearInterval(timer); location.reload(); }
-            }, 1000);
+            timer = setInterval(() => { tiempo--; document.getElementById('tiempo').innerText = tiempo; if(tiempo<=0) { clearInterval(timer); location.reload(); } }, 1000);
             spawn();
         }
         function spawn() {
-            if(corazones >= 50) { document.getElementById('juego-container').style.display = 'none'; document.getElementById('pantalla-carta').style.display = 'flex'; return; }
-            const c = document.createElement('span'); c.innerText = "❤️"; c.className = "corazon";
-            c.style.left = Math.random() * (window.innerWidth - 50) + "px";
-            c.style.top = Math.random() * (window.innerHeight - 50) + "px";
-            c.onclick = () => { corazones++; document.getElementById('puntuacion').innerText = corazones; c.remove(); spawn(); };
+            if(corazones >= 50) return;
+            const c = document.createElement('span'); c.innerText = "❤️"; c.className = 'corazon';
+            c.style.left = Math.random()*(window.innerWidth-60)+'px'; c.style.top = Math.random()*(window.innerHeight-60)+'px';
+            c.onclick = () => { corazones++; document.getElementById('puntuacion').innerText = corazones; c.remove(); if(corazones>=50){ clearInterval(timer); document.getElementById('juego-container').style.display='none'; document.getElementById('final-temp').style.display='block'; document.getElementById('mensaje-final').style.display='none'; document.getElementById('gana-juego').style.display='block'; confetti(); } else { spawn(); } };
             document.getElementById('area-juego').appendChild(c);
-            setTimeout(() => { if(c.parentElement) { c.remove(); spawn(); } }, 700);
+            setTimeout(() => { if(c.parentElement) { c.remove(); spawn(); } }, 850);
         }
 
+        function mostrarPantallaCarta() { document.getElementById('final-temp').style.display = 'none'; document.getElementById('pantalla-carta').style.display = 'flex'; }
         function abrirCarta() {
-            document.getElementById('btn-abrir').style.display = 'none';
+            document.getElementById('seccion-sobre').style.display = 'none';
             document.getElementById('papel-carta').style.display = 'block';
-            let charIdx = 0;
-            function escribir() {
-                if(charIdx < texto.length) { document.getElementById('p-carta').innerHTML += texto[charIdx]; charIdx++; setTimeout(escribir, 30); }
-                else { document.getElementById('btn-ir-propuesta').style.display = 'block'; }
-            }
-            escribir();
+            let i = 0; function escribir() { if(i < texto.length) { document.getElementById('p-carta').innerText += texto[i]; i++; setTimeout(escribir, 40); } else { document.getElementById('btn-sig-final').style.display = 'block'; } } escribir();
         }
 
-        function mostrarPropuesta() {
+        function irAPropuesta() {
             document.getElementById('pantalla-carta').style.display = 'none';
             document.getElementById('pantalla-propuesta').style.display = 'flex';
         }
 
         function rechazar() {
-            escalaSi += 0.3; escalaNo -= 0.15;
+            escalaSi += 0.3; escalaNo -= 0.15; if(escalaNo < 0.3) escalaNo = 0.3;
             document.getElementById('btnSi').style.transform = `scale(${escalaSi})`;
             document.getElementById('btnNo').style.transform = `scale(${escalaNo})`;
             const g = document.getElementById('gato-triste'); g.src = fotos[iGato % fotos.length]; g.style.display = 'block';
-            document.getElementById('mensaje-segura').innerText = msgSegura[iGato % msgSegura.length];
-            iGato++;
+            document.getElementById('mensaje-segura').innerText = msgSeg[iGato % msgSeg.length]; iGato++;
         }
 
         function aceptar() {
-            document.getElementById('pantalla-propuesta').innerHTML = "<h1 style='color:white; z-index:1000;'>Sabiamos que dirias que sí ❤️<br>Te amo muchísimo</h1>";
-            document.getElementById('pantalla-propuesta').style.backgroundColor = "#f06292";
+            document.getElementById('pantalla-propuesta').style.display = 'none';
+            document.getElementById('pantalla-final-si').style.display = 'flex';
             let end = Date.now() + 15000;
-            (function frame() {
-                confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 } });
-                confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 } });
-                if (Date.now() < end) requestAnimationFrame(frame);
-            }());
+            (function frame() { confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 } }); confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 } }); if (Date.now() < end) requestAnimationFrame(frame); }());
         }
     </script>
 </body>
-</html>
+    </html>
+    
